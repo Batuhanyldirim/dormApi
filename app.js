@@ -1090,7 +1090,7 @@ app.post("/FreezeAccount", (req, res) => {
             try {
               cacheStats[frozenUser] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
               res.send("Account Frozen");
@@ -1131,7 +1131,7 @@ app.post("/EventLinkClick", (req, res) => {
             try {
               cacheStats[dailyLinkClick] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
             } catch (err) {
@@ -1172,7 +1172,7 @@ app.post("/EventClick", (req, res) => {
             try {
               cacheStats[dailyEventClick] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
             } catch (err) {
@@ -1214,7 +1214,7 @@ app.post("/detailEventClick", (req, res) => {
               try {
                 cacheStats[dailyDetailClick] += 1;
                 cacheStats[cacheSize] += 1;
-                if (cacheStats[cacheSize] > 50) {
+                if (cacheStats[cacheSize] > 5) {
                   statCache();
                 }
               } catch (err) {
@@ -1915,7 +1915,7 @@ app.post("/likeEvent", (req, res) => {
             try {
               cacheStats[dailyEventLike] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
               res.send({
@@ -2222,7 +2222,7 @@ app.post("/report", (req, res) => {
             try {
               cacheStats[dailyNewReport] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
               res.send("Rapor gönderildi");
@@ -2299,10 +2299,10 @@ app.post("/unmatch", (req, res) => {
             try {
               cacheStats[dailyUnmatch] += 1;
               cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
-              if (cacheStats[cacheSize] > 50) {
+              if (cacheStats[cacheSize] > 5) {
                 statCache();
               }
               res.send("Unmatched");
