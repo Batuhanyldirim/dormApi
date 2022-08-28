@@ -2,6 +2,7 @@ import { cacheStats } from "./lists.js";
 
 export function statCache() {
   //add headers
+  var token = "pyPZCjai__LEB7lIME6HUX3GS36BJ9V8";
   const options = {
     headers: { "access-token": token },
   };
