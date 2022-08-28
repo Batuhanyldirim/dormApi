@@ -6,6 +6,7 @@ import { cacheStats } from "../lists.js";
 import { statCache } from "../statInfo.js";
 import { sendNotification } from "../senders/notification.js";
 import { likeNotification } from "../senders/notification.js";
+import { setDate } from "../connection/generation/endDateSet.js";
 
 export const userActionRouter = express.Router();
 

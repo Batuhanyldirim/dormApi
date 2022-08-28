@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 
 import { con } from "../connection/generation/dbConnection.js";
 import { encPipeline } from "../connection/generation/encrypt.js";
