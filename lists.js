@@ -1,4 +1,22 @@
 export var demoAccounts = "(1118, 1206, 1411)";
+export var expectationList = {
+  takilmak: new Set(),
+  kisaSureli: new Set(),
+  uzunSureli: new Set(),
+  yeniArkadas: new Set(),
+  etkinlikBuddy: new Set(),
+  bilmiyorum: new Set(),
+};
+export var genderPreference = {
+  women: new Set(),
+  men: new Set(),
+  non_binary: new Set(),
+  hetero: new Set(),
+  homo: new Set(),
+  bisexual: new Set(),
+  pansexual: new Set(),
+  asexual: new Set(),
+};
 export var dailyStats = {
   newUser: 0,
   frozenUser: 0,
@@ -28,7 +46,6 @@ export var cacheStats = {
   dailyLinkClick: 0,
   dailyNewReport: 0,
 };
-
 export var appLists = {
   genderList: [
     { key: 0, choice: "Kadın" },

@@ -3,6 +3,10 @@ import { con } from "../connection/generation/dbConnection.js";
 import { encPipeline } from "../connection/generation/encrypt.js";
 import { decPipeline } from "../connection/generation/encrypt.js";
 import { sendVerMail } from "../senders/verMail.js";
+import { sessionTokenGenerator } from "../connection/generation/sessionToken.js";
+import { addUser } from "../connection/generation/updateGenderPref.js";
+import { genderPreference } from "../lists.js";
+import { expectationList } from "../lists.js";
 
 export const accountRouter = express.Router();
 
@@ -10,7 +14,8 @@ function between(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
-accountRouter.get("/trial", function (req, res, next) {
+accountRouter.post("/trial", function (req, res, next) {
+  console.log("this is message: ", req.body);
   console.log("trial route is working");
   res.send("trial route is working");
 });
