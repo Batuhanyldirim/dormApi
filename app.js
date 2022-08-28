@@ -11,7 +11,6 @@ import cors from "cors";
 import { generateSecureLink } from "./connection/generation/s3link.js";
 import { sessionTokenGenerator } from "./connection/generation/sessionToken.js";
 import { swipeList } from "./logic/swipeList.js";
-import { sendVerMail } from "./senders/verMail.js";
 import { setDate } from "./connection/generation/endDateSet.js";
 import { checkDislikeDate } from "./connection/generation/endDateSet.js";
 import { updateGenderPreference } from "./connection/generation/updateGenderPref.js";
@@ -100,9 +99,6 @@ app.listen(port, () => console.log(`Listening on port ${port} ...`));
 app.use("/accountRouter", accountRouter);
 app.use("/secondMain", router2);
 
-function between(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
-}
 /* 
 const con = mysql.createConnection({
   host: process.env.SQL_HOST_NAME,

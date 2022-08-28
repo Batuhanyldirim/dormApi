@@ -2,7 +2,13 @@ import express from "express";
 import { con } from "../connection/generation/dbConnection.js";
 import { encPipeline } from "../connection/generation/encrypt.js";
 import { decPipeline } from "../connection/generation/encrypt.js";
+import { sendVerMail } from "../senders/verMail.js";
+
 export const accountRouter = express.Router();
+
+function between(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
 
 accountRouter.get("/trial", function (req, res, next) {
   console.log("trial route is working");
@@ -267,7 +273,7 @@ accountRouter.post("/Login", async (req, res) => {
   var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
   con.query(sql, function (err, result) {
     try {
-      console.log("this is deviceId: ", deviceId);
+      //console.log("this is deviceId: ", deviceId);
       let secKeys = result;
       let decBody = decPipeline(req.body.message, secKeys);
 
@@ -308,7 +314,7 @@ accountRouter.post("/Login", async (req, res) => {
                       if (result2.length != 0) myPhotos = result2;
 
                       var sesToken = await sessionTokenGenerator();
-                      var date = await new Date();
+                      var date = new Date();
 
                       var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
                       con.query(sql, function (err, result) {
@@ -454,17 +460,6 @@ accountRouter.post("/CheckVerification", (req, res) => {
             res.send({ Verification: -1 });
           } else if (result[0]["attempt"] > 0 && result[0]["VerCode"] == UserVerCode) {
             res.send({ Verification: 1 });
-            /*
-            var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
-            con.query(sql, function (err, result) {
-              try {
-              } catch (err) {
-                res.send(err);
-              }
-            });
-            res.send({ Verification: 1 });
-            //DELETE FROM `table_name` [WHERE condition];
-            */
           } else if (result[0]["attempt"] == 0) {
             var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
             con.query(sql, function (err, result) {
