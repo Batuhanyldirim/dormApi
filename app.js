@@ -7,12 +7,10 @@ import bp from "body-parser";
 import dotenv from "dotenv";
 import AWS from "aws-sdk";
 
-import { generateSecureLink } from "./connection/generation/s3link.js";
-
 //import { checkDislikeDate } from "./connection/generation/endDateSet.js";
 //import { updateGenderPreference } from "./connection/generation/updateGenderPref.js";
 //import { encryiptData } from "./connection/generation/encrypt.js";
-import { encPipeline } from "./connection/generation/encrypt.js";
+import { generateSecureLink } from "./connection/generation/s3link.js";
 import { con } from "./connection/generation/dbConnection.js";
 
 import { updateBoth } from "./connection/generation/updateGenderPref.js";
@@ -54,6 +52,8 @@ app.use("/profile", profileRouter);
 app.use("/userAction", userActionRouter);
 app.use("/lists", listsRouter);
 
+updateBoth(con, genderPreference, expectationList);
+
 /* 
 const con = mysql.createConnection({
   host: process.env.SQL_HOST_NAME,
@@ -61,5 +61,3 @@ const con = mysql.createConnection({
   password: process.env.SQL_PASSWORD,
 });
  */
-
-updateBoth(con, genderPreference, expectationList);
