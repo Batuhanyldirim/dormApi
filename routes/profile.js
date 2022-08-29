@@ -322,7 +322,7 @@ profileRouter.post("/IdentityUpdate", (req, res) => {
               res.send({
                 Message: "Update is successfull",
               });
-              updateBoth(con, genderPreference, expectationList);
+              updateBoth(genderPreference, expectationList);
             } catch (err) {
               res.send(err);
             }

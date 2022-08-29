@@ -17,6 +17,7 @@ con.getConnection((err, connection) => {
     }
     if (err.code === "ECONNREFUSED") {
       console.error("Database connection was refused.");
+      console.log(err);
     }
   }
   if (connection) connection.release();

@@ -1,4 +1,6 @@
-export async function updateBoth(con, genderPreference, expectation) {
+import { con } from "../connections/dbConnection.js";
+
+export async function updateBoth(genderPreference, expectation) {
   var sql = `SELECT UserId, Gender, SexualOrientation, Expectation FROM User;`;
   con.query(sql, function (err, result) {
     var userData = JSON.parse(JSON.stringify(result));

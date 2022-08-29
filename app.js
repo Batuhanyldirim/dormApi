@@ -10,6 +10,7 @@ import AWS from "aws-sdk";
 //import { checkDislikeDate } from "./connection/generation/endDateSet.js";
 //import { updateGenderPreference } from "./connection/generation/updateGenderPref.js";
 //import { encryiptData } from "./connection/generation/encrypt.js";
+
 import { generateSecureLink } from "./generators/s3link.js";
 import { con } from "./connections/dbConnection.js";
 
@@ -46,7 +47,7 @@ app.use("/profile", profileRouter);
 app.use("/userAction", userActionRouter);
 app.use("/lists", listsRouter);
 
-updateBoth(con, genderPreference, expectationList);
+updateBoth(genderPreference, expectationList);
 
 /* 
 const con = mysql.createConnection({
