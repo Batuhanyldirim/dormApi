@@ -35,17 +35,19 @@ statisticsRouter.post("/EventLinkClick", (req, res) => {
               if (cacheStats[cacheSize] > 50) {
                 statCache();
               }
+              res.send();
             } catch (err) {
+              console.log(err);
               res.send(err);
             }
           });
-          res.send();
         } else {
           res.status(410);
           res.send("Unauthorized Session");
         }
       });
     } catch (err) {
+      console.log(err);
       res.status(400);
       res.send("Error");
     }
@@ -76,17 +78,19 @@ statisticsRouter.post("/EventClick", (req, res) => {
               if (cacheStats[cacheSize] > 50) {
                 statCache();
               }
+              res.send();
             } catch (err) {
+              console.log(err);
               res.send(err);
             }
           });
-          res.send();
         } else {
           res.status(410);
           res.send("Unauthorized Session");
         }
       });
     } catch (err) {
+      console.log(err);
       res.status(400);
       res.send("error");
     }
@@ -118,11 +122,11 @@ statisticsRouter.post("/detailEventClick", (req, res) => {
                 if (cacheStats[cacheSize] > 50) {
                   statCache();
                 }
+                res.send();
               } catch (err) {
                 res.send(err);
               }
             });
-            res.send();
           } else {
             res.status(410);
             res.send("Unauthorized Session");

@@ -2,15 +2,11 @@ import express from "express";
 import cors from "cors";
 
 import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline } from "../connection/generation/encrypt.js";
-import { decPipeline } from "../connection/generation/encrypt.js";
-import { cacheStats } from "../lists.js";
+import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { cacheStats, genderPreference, expectationList } from "../lists.js";
 import { statCache } from "../statInfo.js";
-import { genderPreference } from "../lists.js";
-import { expectationList } from "../lists.js";
-import { updateBoth } from "../connection/generation/updateGenderPref.js";
+import { updateBoth, deleteUser } from "../connection/generation/updateGenderPref.js";
 import { generateSecureLink } from "../connection/generation/s3link.js";
-import { deleteUser } from "../connection/generation/updateGenderPref.js";
 
 export const profileRouter = express.Router();
 

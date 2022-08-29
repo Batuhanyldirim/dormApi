@@ -14,8 +14,7 @@ import { generateSecureLink } from "./connection/generation/s3link.js";
 import { con } from "./connection/generation/dbConnection.js";
 
 import { updateBoth } from "./connection/generation/updateGenderPref.js";
-import { genderPreference } from "./lists.js";
-import { expectationList } from "./lists.js";
+import { genderPreference, expectationList } from "./lists.js";
 
 import { accountRouter } from "./routes/account.js";
 import { statisticsRouter } from "./routes/statistics.js";

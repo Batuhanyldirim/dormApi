@@ -1,10 +1,8 @@
 import express from "express";
 
 import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline } from "../connection/generation/encrypt.js";
-import { decPipeline } from "../connection/generation/encrypt.js";
-import { genderPreference } from "../lists.js";
-import { expectationList } from "../lists.js";
+import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { genderPreference, expectationList } from "../lists.js";
 import { swipeList } from "../logic/swipeList.js";
 import { choseList } from "../logic/choseList.js";
 

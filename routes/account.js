@@ -1,12 +1,10 @@
 import express from "express";
 import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline } from "../connection/generation/encrypt.js";
-import { decPipeline } from "../connection/generation/encrypt.js";
+import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
 import { sendVerMail } from "../senders/verMail.js";
 import { sessionTokenGenerator } from "../connection/generation/sessionToken.js";
 import { addUser } from "../connection/generation/updateGenderPref.js";
-import { genderPreference } from "../lists.js";
-import { expectationList } from "../lists.js";
+import { appLists, genderPreference, expectationList } from "../lists.js";
 
 export const accountRouter = express.Router();
 
@@ -365,6 +363,7 @@ accountRouter.post("/Login", async (req, res) => {
                       myres = encPipeline(myres, secKeys);
                       res.send(myres);
                     } catch (err) {
+                      console.log(err);
                       res.send("Error while selecting interest");
                     }
                   });

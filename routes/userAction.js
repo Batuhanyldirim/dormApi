@@ -4,8 +4,7 @@ import { con } from "../connection/generation/dbConnection.js";
 import { decPipeline } from "../connection/generation/encrypt.js";
 import { cacheStats } from "../lists.js";
 import { statCache } from "../statInfo.js";
-import { sendNotification } from "../senders/notification.js";
-import { likeNotification } from "../senders/notification.js";
+import { sendNotification, likeNotification } from "../senders/notification.js";
 import { setDate } from "../connection/generation/endDateSet.js";
 
 export const userActionRouter = express.Router();
@@ -351,6 +350,7 @@ userActionRouter.post("/likeEvent", (req, res) => {
                 Message: "Event liked",
               });
             } catch (err) {
+              console.log(err);
               res.send(err);
             }
           });
@@ -360,6 +360,7 @@ userActionRouter.post("/likeEvent", (req, res) => {
         }
       });
     } catch (err) {
+      console.log(err);
       res.status(400);
       res.send("error");
     }
@@ -388,6 +389,7 @@ userActionRouter.post("/dislikeEvent", (req, res) => {
                 Message: "Event Disliked",
               });
             } catch (err) {
+              console.log(err);
               res.send(err);
             }
           });
@@ -397,6 +399,7 @@ userActionRouter.post("/dislikeEvent", (req, res) => {
         }
       });
     } catch (err) {
+      console.log(err);
       res.status(400);
       res.send("error");
     }

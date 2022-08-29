@@ -2,12 +2,9 @@ import express from "express";
 import cors from "cors";
 
 import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline } from "../connection/generation/encrypt.js";
-import { decPipeline } from "../connection/generation/encrypt.js";
-import { decryiptData } from "../connection/generation/encrypt.js";
-import { cacheStats } from "../lists.js";
+import { decryiptData, encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { cacheStats, appLists } from "../lists.js";
 import { statCache } from "../statInfo.js";
-import { appLists } from "../lists.js";
 
 export const mainRouter = express.Router();
 
@@ -225,11 +222,12 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "05j5HnTH1QWc1xQRCrucKY56o81kKj5i";
+      var deviceId = "0bXyTGIveefm98TGgtY2qGC9ZAr4kQ9f";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         var req = {
           userId: 1,
+          eventId: 511,
         };
 
         var encreq = encPipeline(req, result);
