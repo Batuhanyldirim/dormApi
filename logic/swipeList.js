@@ -1,16 +1,10 @@
 import mysql from "mysql2";
 import { choseList } from "./choseList.js";
-import { encPipeline } from "../connection/generation/encrypt.js";
+import { encPipeline } from "../generators/encrypt.js";
 import { demoAccounts } from "../lists.js";
-
-const con = mysql.createConnection({
-  host: process.env.SQL_HOST_NAME,
-  user: process.env.SQL_USER_NAME,
-  password: process.env.SQL_PASSWORD,
-});
+import { con } from "../connections/dbConnection.js";
 
 export async function swipeList(
-  con,
   UserId,
   minAge,
   maxAge,

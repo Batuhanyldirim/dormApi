@@ -1,7 +1,7 @@
 import express from "express";
 
-import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { con } from "../connections/dbConnection.js";
+import { encPipeline, decPipeline } from "../generators/encrypt.js";
 import { genderPreference, expectationList } from "../lists.js";
 import { swipeList } from "../logic/swipeList.js";
 import { choseList } from "../logic/choseList.js";
@@ -140,7 +140,6 @@ listsRouter.post("/SwipeList", (req, res) => {
                   console.log("userId: " + userId);
                             */
                 swipeList(
-                  con,
                   userId,
                   minAge,
                   maxAge,

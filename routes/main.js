@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
 
-import { con } from "../connection/generation/dbConnection.js";
-import { decryiptData, encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { con } from "../connections/dbConnection.js";
+import { decryiptData, encPipeline, decPipeline } from "../generators/encrypt.js";
 import { cacheStats, appLists } from "../lists.js";
-import { statCache } from "../statInfo.js";
+import { statCache } from "../logic/statInfo.js";
 
 export const mainRouter = express.Router();
 

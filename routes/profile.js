@@ -1,12 +1,13 @@
 import express from "express";
 import cors from "cors";
 
-import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { con } from "../connections/dbConnection.js";
+import { s3 } from "../connections/s3bucket.js";
+import { encPipeline, decPipeline } from "../generators/encrypt.js";
 import { cacheStats, genderPreference, expectationList } from "../lists.js";
-import { statCache } from "../statInfo.js";
-import { updateBoth, deleteUser } from "../connection/generation/updateGenderPref.js";
-import { generateSecureLink } from "../connection/generation/s3link.js";
+import { statCache } from "../logic/statInfo.js";
+import { updateBoth, deleteUser } from "../logic/updateGenderPref.js";
+import { generateSecureLink } from "../generators/s3link.js";
 
 export const profileRouter = express.Router();
 
@@ -22,17 +23,7 @@ var corsOptions = {
 };
 
 function deleteS3Image(imgKey) {
-  const region = "eu-central-1";
   const bucketName = "dorm-img-dev";
-  const accessKeyId = process.env.AWS_ACCES_KEY_ID;
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
-  const s3 = new AWS.S3({
-    region,
-    accessKeyId,
-    secretAccessKey,
-    signatureVersion: "v4",
-  });
 
   var params = { Bucket: bucketName, Key: imgKey };
   s3.deleteObject(params, function (err, data) {

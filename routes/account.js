@@ -1,9 +1,9 @@
 import express from "express";
-import { con } from "../connection/generation/dbConnection.js";
-import { encPipeline, decPipeline } from "../connection/generation/encrypt.js";
+import { con } from "../connections/dbConnection.js";
+import { encPipeline, decPipeline } from "../generators/encrypt.js";
 import { sendVerMail } from "../senders/verMail.js";
-import { sessionTokenGenerator } from "../connection/generation/sessionToken.js";
-import { addUser } from "../connection/generation/updateGenderPref.js";
+import { sessionTokenGenerator } from "../generators/sessionToken.js";
+import { addUser } from "../logic/updateGenderPref.js";
 import { appLists, genderPreference, expectationList } from "../lists.js";
 
 export const accountRouter = express.Router();

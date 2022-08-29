@@ -1,8 +1,8 @@
 import express from "express";
-import { con } from "../connection/generation/dbConnection.js";
-import { decPipeline } from "../connection/generation/encrypt.js";
+import { con } from "../connections/dbConnection.js";
+import { decPipeline } from "../generators/encrypt.js";
 import { cacheStats } from "../lists.js";
-import { statCache } from "../statInfo.js";
+import { statCache } from "../logic/statInfo.js";
 
 export const statisticsRouter = express.Router();
 
@@ -30,9 +30,9 @@ statisticsRouter.post("/EventLinkClick", (req, res) => {
           var sql = `UPDATE Events SET LinkClickCount = LinkClickCount + 1 WHERE EventId = ${eventId};`;
           con.query(sql, function (err, result) {
             try {
-              cacheStats[dailyLinkClick] += 1;
-              cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              cacheStats.dailyLinkClick += 1;
+              cacheStats.cacheSize += 1;
+              if (cacheStats.cacheSize > 50) {
                 statCache();
               }
               res.send();
@@ -73,9 +73,9 @@ statisticsRouter.post("/EventClick", (req, res) => {
           var sql = `UPDATE Events SET click = click + 1 WHERE EventId = ${eventId};`;
           con.query(sql, function (err, result) {
             try {
-              cacheStats[dailyEventClick] += 1;
-              cacheStats[cacheSize] += 1;
-              if (cacheStats[cacheSize] > 50) {
+              cacheStats.dailyEventClick += 1;
+              cacheStats.cacheSize += 1;
+              if (cacheStats.cacheSize > 50) {
                 statCache();
               }
               res.send();
@@ -117,9 +117,9 @@ statisticsRouter.post("/detailEventClick", (req, res) => {
             var sql = `UPDATE Events SET detailClick = detailClick + 1 WHERE EventId = ${eventId};`;
             con.query(sql, function (err, result) {
               try {
-                cacheStats[dailyDetailClick] += 1;
-                cacheStats[cacheSize] += 1;
-                if (cacheStats[cacheSize] > 50) {
+                cacheStats.dailyDetailClick += 1;
+                cacheStats.cacheSize += 1;
+                if (cacheStats.cacheSize > 50) {
                   statCache();
                 }
                 res.send();

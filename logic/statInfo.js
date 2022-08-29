@@ -1,4 +1,4 @@
-import { cacheStats } from "./lists.js";
+import { cacheStats } from "../lists.js";
 
 export function statCache() {
   //add headers

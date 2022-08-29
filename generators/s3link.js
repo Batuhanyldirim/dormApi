@@ -1,23 +1,13 @@
-import aws from "aws-sdk";
 import dotenv from "dotenv";
 import crypto from "crypto";
 import { promisify } from "util";
+import { s3 } from "../connections/s3bucket.js";
 
 const randomBytes = promisify(crypto.randomBytes);
 
 dotenv.config();
 
-const region = "eu-central-1";
 const bucketName = "dorm-img-dev";
-const accessKeyId = process.env.AWS_ACCES_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-
-const s3 = new aws.S3({
-  region,
-  accessKeyId,
-  secretAccessKey,
-  signatureVersion: "v4",
-});
 
 export async function generateSecureLink() {
   const rawBytes = await randomBytes(16);

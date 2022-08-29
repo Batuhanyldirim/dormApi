@@ -10,10 +10,10 @@ import AWS from "aws-sdk";
 //import { checkDislikeDate } from "./connection/generation/endDateSet.js";
 //import { updateGenderPreference } from "./connection/generation/updateGenderPref.js";
 //import { encryiptData } from "./connection/generation/encrypt.js";
-import { generateSecureLink } from "./connection/generation/s3link.js";
-import { con } from "./connection/generation/dbConnection.js";
+import { generateSecureLink } from "./generators/s3link.js";
+import { con } from "./connections/dbConnection.js";
 
-import { updateBoth } from "./connection/generation/updateGenderPref.js";
+import { updateBoth } from "./logic/updateGenderPref.js";
 import { genderPreference, expectationList } from "./lists.js";
 
 import { accountRouter } from "./routes/account.js";
@@ -25,14 +25,9 @@ import { mainRouter } from "./routes/main.js";
 
 dotenv.config();
 
-const region = "eu-central-1";
-const accessKeyId = process.env.AWS_ACCES_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const tableName = "UserChat-iw2d4boh4zbyfooyvaawszlrue-dev";
-
 AWS.config.update({
-  accessKeyId: accessKeyId,
-  secretAccessKey: secretAccessKey,
+  accessKeyId: process.env.AWS_ACCES_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: "eu-central-1",
 });
 
