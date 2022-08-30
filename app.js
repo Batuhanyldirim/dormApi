@@ -1,7 +1,3 @@
-/* 
-Route branch modification
-*/
-
 import express from "express";
 import bp from "body-parser";
 import dotenv from "dotenv";
