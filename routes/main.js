@@ -6,6 +6,7 @@ import { decryiptData, encPipeline } from "../generators/encrypt.js";
 import { cacheStats, appLists } from "../lists.js";
 import { statCache } from "../logic/statInfo.js";
 import { dec } from "../middlewares/enc-dec.js";
+import { auth } from "../middlewares/authentication.js";
 
 export const mainRouter = express.Router();
 
@@ -24,35 +25,27 @@ mainRouter.post("/trial", function (req, res, next) {
 });
 
 // REPORT
-mainRouter.post("/report", dec, (req, res) => {
+mainRouter.post("/report", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
 
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
-  con.query(sql, async function (err, result) {
-    var UserId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == UserId) {
-      var sikayetci = UserId;
-      var sikayetEdilen = decBody.sikayetEdilen;
-      var sikayetKodu = decBody.sikayetKodu;
-      var aciklama = decBody.aciklama;
-      var sql = `INSERT INTO rapor (sikayetEden, sikayetEdilen, sikayetKodu, Aciklama) VALUES ('${sikayetci}', '${sikayetEdilen}', '${sikayetKodu}', '${aciklama}');`;
-      con.query(sql, function (err, result) {
-        try {
-          cacheStats[dailyNewReport] += 1;
-          cacheStats[cacheSize] += 1;
-          if (cacheStats[cacheSize] > 50) {
-            statCache();
-          }
-          res.send("Rapor gönderildi");
-        } catch (err) {
-          res.send(err);
-        }
-      });
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+  var UserId = decBody.userId;
+
+  var sikayetci = UserId;
+  var sikayetEdilen = decBody.sikayetEdilen;
+  var sikayetKodu = decBody.sikayetKodu;
+  var aciklama = decBody.aciklama;
+  var sql = `INSERT INTO rapor (sikayetEden, sikayetEdilen, sikayetKodu, Aciklama) VALUES ('${sikayetci}', '${sikayetEdilen}', '${sikayetKodu}', '${aciklama}');`;
+  con.query(sql, function (err, result) {
+    try {
+      cacheStats[dailyNewReport] += 1;
+      cacheStats[cacheSize] += 1;
+      if (cacheStats[cacheSize] > 50) {
+        statCache();
+      }
+      res.send("Rapor gönderildi");
+    } catch (err) {
+      res.send(err);
     }
   });
 });
@@ -87,59 +80,42 @@ mainRouter.post("/eventreport", dec, (req, res) => {
 });
 
 //GET TOKEN
-mainRouter.post("/getToken", dec, (req, res) => {
+mainRouter.post("/getToken", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
+  const UserId = decBody.userId;
+
+  var sql = `SELECT * FROM notification WHERE userId = ${UserId};`;
   con.query(sql, async function (err, result) {
-    const UserId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == UserId) {
-      var sql = `SELECT * FROM notification WHERE userId = ${UserId};`;
-      con.query(sql, async function (err, result) {
-        try {
-          var myKey = result[0].notifKey;
-          var encResponse = encPipeline({ myKey }, secKeys);
-          res.send(encResponse);
-        } catch (err) {
-          console.log(err);
-          res.send(err);
-        }
-      });
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+    try {
+      var myKey = result[0].notifKey;
+      var encResponse = encPipeline({ myKey }, secKeys);
+      res.send(encResponse);
+    } catch (err) {
+      console.log(err);
+      res.send(err);
     }
   });
 });
 
 //REGISTER TOKEN
-mainRouter.post("/registerToken", dec, (req, res) => {
+mainRouter.post("/registerToken", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
-  var token = req.headers["access-token"];
 
-  var sql = `SELECT User.UserId, User.Name FROM sesToken, User WHERE sesToken = '${token}' AND sesToken.UserId = User.UserId`;
+  const userId = decBody.userId;
 
+  const notifKey = decBody.token;
+
+  var sql = `REPLACE INTO notification (userId, notifKey) VALUES ('${userId}','${notifKey}');`;
   con.query(sql, async function (err, result) {
-    const userId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == userId) {
-      const notifKey = decBody.token;
-
-      var sql = `REPLACE INTO notification (userId, notifKey) VALUES ('${userId}','${notifKey}');`;
-      con.query(sql, async function (err, result) {
-        try {
-          //swipeResult = await swipeList(con, "-1");
-        } catch (err) {
-          res.send(err);
-        }
-      });
-      res.send("Okay");
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+    try {
+      //swipeResult = await swipeList(con, "-1");
+    } catch (err) {
+      res.send(err);
     }
   });
+  res.send("Okay");
 });
 
 //APP VERSION
@@ -191,8 +167,8 @@ if (process.env.RUN_STATE == "DEV") {
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         var req = {
-          mail: "ybatuhan@sabanciuniv.edu",
-          isNewUser: 0,
+          eventId: 512,
+          userId: 1,
         };
 
         var encreq = encPipeline(req, result);

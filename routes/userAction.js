@@ -7,6 +7,7 @@ import { statCache } from "../logic/statInfo.js";
 import { sendNotification, likeNotification } from "../senders/notification.js";
 import { setDate } from "../generators/endDateSet.js";
 import { dec } from "../middlewares/enc-dec.js";
+import { auth } from "../middlewares/authentication.js";
 
 export const userActionRouter = express.Router();
 
@@ -313,98 +314,73 @@ userActionRouter.post("/LikeDislike", dec, async (req, res) => {
 });
 
 //LIKE EVENT
-userActionRouter.post("/likeEvent", dec, (req, res) => {
+userActionRouter.post("/likeEvent", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
+  const UserId = decBody.userId;
 
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
-  con.query(sql, async function (err, result) {
-    const UserId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == UserId) {
-      const eventId = decBody.eventId;
-      const likeMode = decBody.likeMode;
-      var sql = `INSERT INTO LikeEvent (EventId, UserId, likeMode) VALUES ('${eventId}', '${UserId}', ${likeMode});`;
-      con.query(sql, function (err, result) {
-        try {
-          cacheStats[dailyEventLike] += 1;
-          cacheStats[cacheSize] += 1;
-          if (cacheStats[cacheSize] > 50) {
-            statCache();
-          }
-          res.send({
-            Message: "Event liked",
-          });
-        } catch (err) {
-          console.log(err);
-          res.send(err);
-        }
+  const eventId = decBody.eventId;
+  const likeMode = decBody.likeMode;
+  var sql = `INSERT INTO LikeEvent (EventId, UserId, likeMode) VALUES ('${eventId}', '${UserId}', ${likeMode});`;
+  con.query(sql, function (err, result) {
+    try {
+      cacheStats[dailyEventLike] += 1;
+      cacheStats[cacheSize] += 1;
+      if (cacheStats[cacheSize] > 50) {
+        statCache();
+      }
+      res.send({
+        Message: "Event liked",
       });
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+    } catch (err) {
+      console.log(err);
+      res.send(err);
     }
   });
 });
 
 //DISLIKE EVENT
-userActionRouter.post("/dislikeEvent", dec, (req, res) => {
+userActionRouter.post("/dislikeEvent", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
+  const UserId = decBody.userId;
 
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
-  con.query(sql, async function (err, result) {
-    const UserId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == UserId) {
-      const eventId = decBody.eventId;
-      var sql = `DELETE FROM LikeEvent WHERE EventId = ${eventId} AND UserId = ${UserId};`;
-      con.query(sql, function (err, result) {
-        try {
-          res.send({
-            Message: "Event Disliked",
-          });
-        } catch (err) {
-          console.log(err);
-          res.send(err);
-        }
+  const eventId = decBody.eventId;
+  var sql = `DELETE FROM LikeEvent WHERE EventId = ${eventId} AND UserId = ${UserId};`;
+  con.query(sql, function (err, result) {
+    try {
+      res.send({
+        Message: "Event Disliked",
       });
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+    } catch (err) {
+      console.log(err);
+      res.send(err);
     }
   });
 });
 
 //UNMATCH
-userActionRouter.post("/unmatch", dec, (req, res) => {
+userActionRouter.post("/unmatch", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
-  con.query(sql, async function (err, result) {
-    var UserId = decBody.userId;
-    if (result.length != 0 && result[0].UserId == UserId) {
-      var unmatchId = decBody.unmatchId;
-      var sql = `DELETE FROM MatchR WHERE MatchId = ${unmatchId}`;
-      con.query(sql, function (err, result) {
-        try {
-          cacheStats[dailyUnmatch] += 1;
-          cacheStats[cacheSize] += 1;
-          if (cacheStats[cacheSize] > 50) {
-            statCache();
-          }
-          if (cacheStats[cacheSize] > 50) {
-            statCache();
-          }
-          res.send("Unmatched");
-        } catch (err) {
-          res.send(err);
-        }
-      });
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
+
+  var UserId = decBody.userId;
+
+  var unmatchId = decBody.unmatchId;
+  var sql = `DELETE FROM MatchR WHERE MatchId = ${unmatchId}`;
+  con.query(sql, function (err, result) {
+    try {
+      cacheStats[dailyUnmatch] += 1;
+      cacheStats[cacheSize] += 1;
+      if (cacheStats[cacheSize] > 50) {
+        statCache();
+      }
+      if (cacheStats[cacheSize] > 50) {
+        statCache();
+      }
+      res.send("Unmatched");
+    } catch (err) {
+      res.send(err);
     }
   });
 });
