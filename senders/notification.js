@@ -25,7 +25,7 @@ export async function sendNotification(matchId, sender, otherUser, matchMode, to
     });
 }
 
-export async function likeNotification(sender, otherUser, eventId, token) {
+export async function likeNotification(sender, otherUser, eventId, eventName, token) {
   //add headers
   const options = {
     headers: { "access-token": token },
@@ -35,10 +35,14 @@ export async function likeNotification(sender, otherUser, eventId, token) {
   const body = {
     sender: sender,
     usertobeSent: otherUser,
+    eventId: eventId,
+    eventName: eventName,
   };
-
+  var link = "http://localhost:3002/likeNotification";
+  //var link = "https://devmessage.meetdorm.com/likeNotification"
+  console.log("like notif sent");
   axios
-    .post("https://devmessage.meetdorm.com/likeNotification", body, options)
+    .post(link, body, options)
     .then((response) => {
       //receive response
       console.log(response);
