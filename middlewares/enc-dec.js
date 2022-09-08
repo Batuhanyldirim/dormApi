@@ -35,19 +35,3 @@ export function dec(req, res, next) {
     }
   });
 }
-
-export function auth(req, res, next) {
-  var token = req.headers["access-token"];
-  var sql = `SELECT UserId FROM sesToken WHERE sesToken = '${token}'`;
-  con.query(sql, async function (err, result) {
-    const userId = req.body.userId;
-
-    if (result.length != 0 && result[0].UserId == userId) {
-      console.log("here is it");
-      next();
-    } else {
-      res.status(410);
-      res.send("Unauthorized Session");
-    }
-  });
-}

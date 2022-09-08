@@ -120,7 +120,7 @@ mainRouter.post("/registerToken", dec, auth, (req, res) => {
 
 //APP VERSION
 mainRouter.post("/appversion", (req, res) => {
-  const appVersion = "1.2.7";
+  const appVersion = "1.3.0";
   //console.log("\n\n\nApp version is: " + appVersion);
 
   var date = new Date();
@@ -145,6 +145,8 @@ mainRouter.post("/appversion", (req, res) => {
     appVersion: appVersion,
     univList: appLists["univList"],
     genderList: appLists["genderList"],
+    sexualOrientationList: appLists["sexualOrientationList"],
+    expectationList: appLists["expectationList"],
   });
 });
 
@@ -167,7 +169,7 @@ if (process.env.RUN_STATE == "DEV") {
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         var req = {
-          eventId: 512,
+          token: "denemeToken",
           userId: 1,
         };
 

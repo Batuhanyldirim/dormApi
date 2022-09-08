@@ -1,7 +1,6 @@
 import express from "express";
 
 import { con } from "../connections/dbConnection.js";
-import { decPipeline } from "../generators/encrypt.js";
 import { cacheStats } from "../lists.js";
 import { statCache } from "../logic/statInfo.js";
 import { sendNotification, likeNotification } from "../senders/notification.js";

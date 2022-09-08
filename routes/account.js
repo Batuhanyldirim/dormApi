@@ -212,8 +212,8 @@ accountRouter.post("/AfterRegister", dec, async (req, res) => {
       const SexualOrientation = decBody.sexualOrientation;
       const SOVisibility = decBody.SOVisibility;
       const GenderVisibility = decBody.genderVisibility;
-      const onBoardingComplete = 1;
-      const AccountValidation = 1;
+      const onBoardingComplete = 0;
+      const AccountValidation = 0;
       const matchMode = decBody.matchMode;
 
       addUser(genderPreference, userId, gender, SexualOrientation, expectationList, expectation);
@@ -305,7 +305,7 @@ accountRouter.post("/Login", dec, async (req, res) => {
                     SwipeRefreshTime: `${userData.SwipeRefreshTime}`,
                     Expectation: `${userData.Expectation}`,
                     InterestedSex: `${userData.InterestedSex}`,
-                    SexualOrientationame: `${userData.SexualOrientation}`,
+                    sexualOrientation: `${userData.SexualOrientation}`,
                     SOVisibility: `${userData.SOVisibility}`,
                     Major: `${userData.Major}`,
                     Din: `${userData.Din}`,

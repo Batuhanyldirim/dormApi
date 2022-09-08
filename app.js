@@ -1,15 +1,7 @@
-/* 
-middleware branch
-*/
-
 import express from "express";
 import bp from "body-parser";
 import dotenv from "dotenv";
 import AWS from "aws-sdk";
-
-//import { checkDislikeDate } from "./connection/generation/endDateSet.js";
-//import { updateGenderPreference } from "./connection/generation/updateGenderPref.js";
-//import { encryiptData } from "./connection/generation/encrypt.js";
 
 import { generateSecureLink } from "./generators/s3link.js";
 import { con } from "./connections/dbConnection.js";
