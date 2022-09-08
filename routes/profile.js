@@ -196,8 +196,11 @@ profileRouter.post("/IdentityUpdate", dec, auth, (req, res) => {
   const Alkol = decBody.Alkol;
   const Sigara = decBody.Sigara;
   const About = decBody.About;
+  const sexualOrientation = decBody.sexualOrientation;
+  const Expectation = decBody.Expectation;
+  //const InterestedSex = decBody.InterestedSex;
 
-  var sql = `UPDATE User SET Name = '${Name}',Surname = '${Surname}',Gender = '${Gender}',Major = '${Major}', Din = '${Din}', Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', About = '${About}'  WHERE UserId = ${UserId};`;
+  var sql = `UPDATE User SET Expectation = ${Expectation} ,SexualOrientation = ${sexualOrientation}, Name = '${Name}',Surname = '${Surname}',Gender = '${Gender}',Major = '${Major}', Din = '${Din}', Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', About = '${About}'  WHERE UserId = ${UserId};`;
   con.query(sql, async function (err, result) {
     try {
       //swipeResult = await swipeList(con, "-1");

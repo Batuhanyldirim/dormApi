@@ -1,4 +1,4 @@
-export var demoAccounts = "(1118, 1206, 1411)";
+export var demoAccounts = "(1118, 1206, 141, 32, 33, 1454)";
 export var expectationList = {
   takilmak: new Set(),
   kisaSureli: new Set(),
@@ -51,7 +51,8 @@ export var appLists = {
     { key: 0, choice: "Kadın" },
     { key: 1, choice: "Erkek" },
     { key: 2, choice: "Non-Binary" },
-    { key: 3, choice: "Belirtmek İstemiyorum" },
+    { key: 3, choice: "Belirtmek İstemiyorum" },
+    { key: 4, choice: "" },
   ],
   univList: [
     { key: 0, choice: "" },
@@ -70,7 +71,6 @@ export var appLists = {
     { key: 13, choice: "Yeditepe Üniversitesi", mailExt: "std.yeditepe.edu.tr" },
     { key: 14, choice: "Yıldız Teknik Üniversitesi", mailExt: "std.yildiz.edu.tr" },
   ],
-
   religionList: [
     { key: 0, choice: "" },
     { key: 1, choice: "Müslüman" },
@@ -80,7 +80,6 @@ export var appLists = {
     { key: 1, choice: "Ateist" },
     { key: 1, choice: "Belirtmek İstemiyorum" },
   ],
-
   signList: [
     { key: 0, choice: "" },
     { key: 1, choice: "Akrep" },
@@ -112,5 +111,20 @@ export var appLists = {
     { key: 3, choice: "Arada sırada" },
     { key: 4, choice: "Asla" },
     { key: 5, choice: "Belirtmek İstemiyorum" },
+  ],
+  sexualOrientationList: [
+    { key: 0, choice: "" },
+    { key: 1, choice: "Erkek" },
+    { key: 2, choice: "Kadın" },
+    { key: 3, choice: "Herkes" },
+  ],
+  expectationList: [
+    { key: 0, choice: "" },
+    { key: 1, choice: "Takılmak" },
+    { key: 2, choice: "Kısa Süreli İlişki" },
+    { key: 3, choice: "Uzun Süreli İlişki" },
+    { key: 4, choice: "Yeni Arkadaşlıklar" },
+    { key: 5, choice: "Etkinliklere Eşlik Edecek Biri" },
+    { key: 6, choice: "Ne istediğimi Bilmiyorum" },
   ],
 };
