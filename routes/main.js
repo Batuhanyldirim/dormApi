@@ -122,7 +122,6 @@ mainRouter.post("/registerToken", dec, auth, (req, res) => {
 mainRouter.post("/appversion", (req, res) => {
   const appVersion = "1.3.0";
   //console.log("\n\n\nApp version is: " + appVersion);
-
   var date = new Date();
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
   var now = date.toISOString().slice(0, 16);
@@ -165,12 +164,13 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "0crlgeZqFw4yfJnXOqh2D7VjtzKZbzoo";
+      var deviceId = "0IgrxJJlHtQWcmy8zwveD6Iqhryln06l";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
+        //console.log("result: ", result);
         var req = {
-          token: "denemeToken",
-          userId: 1,
+          mail: "ybatuhan@sabanciuniv.edu",
+          password: "af7174e78915f897081d1ac27446de4332214d4802cfa470166235af317164a0",
         };
 
         var encreq = encPipeline(req, result);
