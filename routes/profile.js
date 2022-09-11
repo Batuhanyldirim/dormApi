@@ -190,19 +190,20 @@ profileRouter.post("/IdentityUpdate", dec, auth, (req, res) => {
   const Surname = decBody.Surname;
   const Gender = decBody.Gender;
   const Major = decBody.Major;
-  const Din = decBody.Din;
+  //const Din = decBody.Din;
   const Burc = decBody.Burc;
   const Beslenme = decBody.Beslenme;
   const Alkol = decBody.Alkol;
   const Sigara = decBody.Sigara;
   const About = decBody.About;
-  const sexualOrientation = decBody.sexualOrientation;
+  //const sexualOrientation = decBody.sexualOrientation;
   const Expectation = decBody.Expectation;
   //const InterestedSex = decBody.InterestedSex;
 
-  var sql = `UPDATE User SET Expectation = ${Expectation} ,SexualOrientation = ${sexualOrientation}, Name = '${Name}',Surname = '${Surname}',Gender = '${Gender}',Major = '${Major}', Din = '${Din}', Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', About = '${About}'  WHERE UserId = ${UserId};`;
+  var sql = `UPDATE User SET Expectation = ${Expectation} , Name = '${Name}',Surname = '${Surname}',Gender = '${Gender}',Major = '${Major}',  Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', About = '${About}'  WHERE UserId = ${UserId};`;
   con.query(sql, async function (err, result) {
     try {
+      console.log("query : ", sql);
       //swipeResult = await swipeList(con, "-1");
       res.send({
         Message: "Update is successfull",

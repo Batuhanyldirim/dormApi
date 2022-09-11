@@ -120,7 +120,7 @@ mainRouter.post("/registerToken", dec, auth, (req, res) => {
 
 //APP VERSION
 mainRouter.post("/appversion", (req, res) => {
-  const appVersion = "1.3.0";
+  const appVersion = "1.3";
   //console.log("\n\n\nApp version is: " + appVersion);
   var date = new Date();
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
@@ -164,13 +164,23 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "0IgrxJJlHtQWcmy8zwveD6Iqhryln06l";
+      var deviceId = "03flB35AhiKsyziLySeKssRRmHWovSiP";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
         var req = {
-          mail: "ybatuhan@sabanciuniv.edu",
-          password: "af7174e78915f897081d1ac27446de4332214d4802cfa470166235af317164a0",
+          userId: 33,
+          Name: "deneme2",
+          Surname: "222",
+          Gender: 1,
+          InterestedSex: 2,
+          Expectation: 1,
+          Major: "CS",
+          Burc: 2,
+          Beslenme: 1,
+          Alkol: 3,
+          Sigara: 5,
+          About: "asjdasdjasdkads\nasdasd\n\n\nasdasd",
         };
 
         var encreq = encPipeline(req, result);
