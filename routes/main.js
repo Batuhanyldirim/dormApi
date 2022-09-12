@@ -169,18 +169,8 @@ if (process.env.RUN_STATE == "DEV") {
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
         var req = {
-          userId: 33,
-          Name: "deneme2",
-          Surname: "222",
-          Gender: 1,
-          InterestedSex: 2,
-          Expectation: 1,
-          Major: "CS",
-          Burc: 2,
-          Beslenme: 1,
-          Alkol: 3,
-          Sigara: 5,
-          About: "asjdasdjasdkads\nasdasd\n\n\nasdasd",
+          userId: 1,
+          campus: "Sabancı Üniversitesi",
         };
 
         var encreq = encPipeline(req, result);

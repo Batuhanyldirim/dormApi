@@ -13,6 +13,17 @@ import { auth } from "../middlewares/authentication.js";
 
 export const profileRouter = express.Router();
 
+function syncQuery(con, sql) {
+  return new Promise((resolve, reject) => {
+    con.query(sql, (error, elements) => {
+      if (error) {
+        return reject(error);
+      }
+      return resolve(elements);
+    });
+  });
+}
+
 profileRouter.post("/trial", function (req, res, next) {
   console.log("this is message: ", req.body);
   console.log("profile route is working");
@@ -257,32 +268,22 @@ profileRouter.post("/SecurePhotoLink", dec, auth, cors(corsOptions), async (req,
 });
 
 //LOAD USER PHOTO LINK
-profileRouter.post("/AddPhotoLink", dec, auth, (req, res) => {
+profileRouter.post("/AddPhotoLink", dec, auth, async (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
 
   var UserId = decBody.userId;
 
   var sql2 = `DELETE FROM Photos WHERE UserId=${UserId};`;
-  con.query(sql2, function (err, result) {
-    try {
-    } catch (err) {
-      res.send(err);
-    }
-  });
+  await syncQuery(con, sql2);
+
   for (var i = 0; i < decBody.photos.length; i++) {
     var photoName = decBody.photos[i].PhotoLink.split("/");
     photoName = photoName[photoName.length - 1];
     var photoLink = "https://d13pzveje1c51z.cloudfront.net/" + photoName;
     //console.log("this is front link: ", photoLink);
-    var sql = `REPLACE INTO Photos (Photo_Order, PhotoLink, UserId) VALUES (${decBody.photos[i].Photo_Order} , '${photoLink}', ${UserId});`;
-    con.query(sql, function (err, result) {
-      try {
-        //console.log("Photo link: " + decBody.photos[i].PhotoLink);
-      } catch (err) {
-        //res.send(err);
-      }
-    });
+    var sql = `INSERT INTO Photos (Photo_Order, PhotoLink, UserId) VALUES (${decBody.photos[i].Photo_Order} , '${photoLink}', ${UserId});`;
+    await syncQuery(con, sql);
   }
   //swipeResult = await swipeList(con, "-1");
   res.send({
