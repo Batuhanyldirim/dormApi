@@ -7,6 +7,7 @@ import { cacheStats, appLists } from "../lists.js";
 import { statCache } from "../logic/statInfo.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { auth } from "../middlewares/authentication.js";
+import { sendReportMail } from "../senders/verMail.js";
 
 export const mainRouter = express.Router();
 
@@ -34,17 +35,21 @@ mainRouter.post("/report", dec, auth, (req, res) => {
   var sikayetci = UserId;
   var sikayetEdilen = decBody.sikayetEdilen;
   var sikayetKodu = decBody.sikayetKodu;
-  var aciklama = decBody.aciklama;
+  var aciklama = decBody.aciklama ?? "";
+  var mail = decBody.mail ?? "";
   var sql = `INSERT INTO rapor (sikayetEden, sikayetEdilen, sikayetKodu, Aciklama) VALUES ('${sikayetci}', '${sikayetEdilen}', '${sikayetKodu}', '${aciklama}');`;
   con.query(sql, function (err, result) {
     try {
-      cacheStats[dailyNewReport] += 1;
-      cacheStats[cacheSize] += 1;
-      if (cacheStats[cacheSize] > 50) {
+      cacheStats.dailyNewReport += 1;
+      cacheStats.cacheSize += 1;
+      if (cacheStats.cacheSize > 50) {
         statCache();
       }
+
+      sendReportMail(mail);
       res.send("Rapor gönderildi");
     } catch (err) {
+      console.log(err);
       res.send(err);
     }
   });
@@ -170,7 +175,9 @@ if (process.env.RUN_STATE == "DEV") {
         //console.log("result: ", result);
         var req = {
           userId: 1,
-          campus: "Sabancı Üniversitesi",
+          sikayetEdilen: 31,
+          sikayetKodu: 1,
+          mail: "ybatuhan@sabanciuniv.edu",
         };
 
         var encreq = encPipeline(req, result);
