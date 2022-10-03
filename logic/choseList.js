@@ -7,9 +7,13 @@ function getDifference(setA, setB) {
 }
 
 function getIntersection(setA, setB) {
-  const intersection = new Set([...setA].filter((element) => setB.has(element)));
+  try {
+    const intersection = new Set([...setA].filter((element) => setB.has(element)));
 
-  return intersection;
+    return intersection;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 export function choseList(genderPreference, gender, interestedSex, expectationList, expectation) {
@@ -17,6 +21,7 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
   console.log("interestedSex: " + interestedSex); */
 
   var isFive = false;
+  var finalResult = [];
 
   if (gender == 1 && interestedSex == 0) {
     var resultSet = addSet(genderPreference["women"], genderPreference["non_binary"]);
@@ -47,37 +52,46 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
     );
   }
 
-  if (expectation == 0) {
+  /*   console.log("gender: ", gender);
+  console.log("interestedSex: ", interestedSex);
+  console.log("resultSet: ", resultSet); */
+
+  if (expectation == 1) {
     var expectResult = addSet(
       addSet(expectationList["takilmak"], expectationList["kisaSureli"]),
       expectationList["bilmiyorum"]
     );
-  } else if (expectation == 1) {
+  } else if (expectation == 2) {
     var expectResult = addSet(
       addSet(expectationList["kisaSureli"], expectationList["takilmak"]),
       addSet(expectationList["uzunSureli"], expectationList["bilmiyorum"])
     );
-  } else if (expectation == 2) {
+  } else if (expectation == 3) {
     var expectResult = addSet(
       addSet(expectationList["uzunSureli"], expectationList["kisaSureli"]),
       expectationList["bilmiyorum"]
     );
-  } else if (expectation == 3) {
+  } else if (expectation == 4) {
     var expectResult = addSet(
       addSet(expectationList["yeniArkadas"], expectationList["etkinlikBuddy"]),
       expectationList["bilmiyorum"]
     );
-  } else if (expectation == 4) {
+  } else if (expectation == 5) {
     var expectResult = addSet(
       addSet(expectationList["etkinlikBuddy"], expectationList["yeniArkadas"]),
       expectationList["bilmiyorum"]
     );
-  } else if (expectation == 5) {
-    var finalResult = resultSet;
+  } else if (expectation == 6) {
+    finalResult = resultSet;
     isFive = true;
   }
+  /* 
+  console.log("expectation: ", expectation);
+  console.log("expectation: \n expectation\nexpectation\nexpectation");
+  console.log("expectResult: ", expectResult); */
 
-  if (!isFive) {
+  if (!isFive && expectResult != undefined && resultSet != undefined) {
+    console.log("expectResult: ", expectResult);
     var finalResult = getIntersection(resultSet, expectResult);
   }
 

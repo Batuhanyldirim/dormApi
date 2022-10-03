@@ -196,22 +196,22 @@ profileRouter.post("/IdentityUpdate", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
   const UserId = decBody.userId;
-
   const Name = decBody.Name;
   const Surname = decBody.Surname;
   const Gender = decBody.Gender;
   const Major = decBody.Major;
-  //const Din = decBody.Din;
   const Burc = decBody.Burc;
   const Beslenme = decBody.Beslenme;
   const Alkol = decBody.Alkol;
   const Sigara = decBody.Sigara;
   const About = decBody.About;
-  //const sexualOrientation = decBody.sexualOrientation;
   const Expectation = decBody.Expectation;
   const InterestedSex = decBody.InterestedSex;
+  const City = decBody.City ?? "İstanbul";
 
-  var sql = `UPDATE User SET InterestedSex = ${InterestedSex}, Expectation = ${Expectation} , Name = '${Name}',Surname = '${Surname}',Gender = '${Gender}',Major = '${Major}',  Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', About = '${About}'  WHERE UserId = ${UserId};`;
+  var sql = `UPDATE User SET InterestedSex = ${InterestedSex}, Expectation = ${Expectation} , Name = '${Name}',Surname = '${Surname}',
+  Gender = '${Gender}',Major = '${Major}',  Burc = '${Burc}', Beslenme = '${Beslenme}', Alkol = '${Alkol}', Sigara = '${Sigara}', 
+  About = '${About}', City = '${City}'  WHERE UserId = ${UserId};`;
   con.query(sql, async function (err, result) {
     try {
       console.log("query : ", sql);

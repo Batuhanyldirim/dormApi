@@ -55,7 +55,7 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
                   }
                 }
               }
-              //console.log(event_list);
+              console.log(event_list);
               event_list = encPipeline(event_list, secKeys);
               res.send(event_list);
               return;
@@ -94,6 +94,7 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
   con.query(sql2, function (err, result2) {
     try {
       var userData = JSON.parse(JSON.stringify(result2).slice(1, -1));
+
       //console.log("This is result\n\n" + (await swipeList(con, "-1")));
       if (userData.Invisible) {
         res.status(411);
@@ -108,6 +109,7 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
                   console.log("cigar: " + cigar);
                   console.log("userId: " + userId);
                             */
+
         swipeList(
           userId,
           minAge,

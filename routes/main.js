@@ -125,7 +125,7 @@ mainRouter.post("/registerToken", dec, auth, (req, res) => {
 
 //APP VERSION
 mainRouter.post("/appversion", (req, res) => {
-  const appVersion = "1.3";
+  const appVersion = "1.4";
   //console.log("\n\n\nApp version is: " + appVersion);
   var date = new Date();
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
@@ -151,6 +151,7 @@ mainRouter.post("/appversion", (req, res) => {
     genderList: appLists["genderList"],
     sexualOrientationList: appLists["sexualOrientationList"],
     expectationList: appLists["expectationList"],
+    cityList: appLists["cityList"],
   });
 });
 
@@ -169,15 +170,24 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "03flB35AhiKsyziLySeKssRRmHWovSiP";
+      var deviceId = "0APHuH1b8g45e9sBYZqmjI4bHPTxzPXB";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
         var req = {
-          userId: 1,
-          sikayetEdilen: 31,
-          sikayetKodu: 1,
-          mail: "ybatuhan@sabanciuniv.edu",
+          userId: 33,
+          Name: "denemeee",
+          Surname: "dene2",
+          Gender: 1,
+          InterestedSex: 3,
+          Expectation: 4,
+          Major: "CS",
+          City: "İzmir",
+          Burc: 10,
+          Beslenme: 1,
+          Alkol: 3,
+          Sigara: 5,
+          About: "asjdasdjasdkads\nasdasd\n\n\nasdasd",
         };
 
         var encreq = encPipeline(req, result);

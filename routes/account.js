@@ -6,6 +6,7 @@ import { sessionTokenGenerator } from "../generators/sessionToken.js";
 import { addUser } from "../logic/updateGenderPref.js";
 import { appLists, genderPreference, expectationList } from "../lists.js";
 import { dec } from "../middlewares/enc-dec.js";
+import { setDate } from "../generators/endDateSet.js";
 
 export const accountRouter = express.Router();
 
@@ -62,6 +63,7 @@ accountRouter.post("/register", dec, async (req, res) => {
             con.query(sql, function (err, result) {
               try {
                 if (result == "") {
+                  console.log("here");
                   var date = new Date();
                   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
                   var now = date.toISOString().slice(0, -5);
@@ -72,36 +74,40 @@ accountRouter.post("/register", dec, async (req, res) => {
                           '${matchMode}', '${SwipeRefreshTime}', '${reportDegree}', '${frozen}');`;
                   con.query(sql, function (err, result) {
                     try {
-                    } catch (err) {
-                      res.status(400);
-                      res.send(err);
-                    }
-                  });
-                  var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
-                  var CreatedId;
-                  con.query(sql, async function (err, result) {
-                    try {
-                      var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
-                      CreatedId = userData.UserId;
-
-                      var sesToken = await sessionTokenGenerator();
-
-                      var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
-                      con.query(sql, function (err, result) {
+                      var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
+                      var CreatedId;
+                      con.query(sql, async function (err, result) {
                         try {
+                          console.log("result: ", result);
+                          var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
+                          CreatedId = userData.UserId;
+
+                          var sesToken = await sessionTokenGenerator();
+
+                          var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
+                          con.query(sql, function (err, result) {
+                            try {
+                            } catch (err) {
+                              console.log(err);
+                              res.send(err);
+                            }
+                          });
+                          var myres = {
+                            userId: `${userData.UserId}`,
+                            sesToken: sesToken,
+                          };
+
+                          myres = encPipeline(myres, secKeys);
+
+                          res.send(myres);
                         } catch (err) {
+                          console.log(err);
+                          res.status(400);
                           res.send(err);
                         }
                       });
-                      var myres = {
-                        userId: `${userData.UserId}`,
-                        sesToken: sesToken,
-                      };
-
-                      myres = encPipeline(myres, secKeys);
-
-                      res.send(myres);
                     } catch (err) {
+                      console.log(err);
                       res.status(400);
                       res.send(err);
                     }
@@ -118,6 +124,7 @@ accountRouter.post("/register", dec, async (req, res) => {
               }
             });
           } catch (err) {
+            console.log(err);
             res.status(400);
             res.send(err);
           }
@@ -125,10 +132,12 @@ accountRouter.post("/register", dec, async (req, res) => {
 
         //DELETE FROM `table_name` [WHERE condition];
       } else {
+        console.log(err);
         res.status(400);
         res.send({ Verification: -1 });
       }
     } catch (err) {
+      console.log(err);
       res.status(400);
       res.send(err);
     }
@@ -212,8 +221,8 @@ accountRouter.post("/AfterRegister", dec, async (req, res) => {
       const SexualOrientation = decBody.sexualOrientation;
       const SOVisibility = decBody.SOVisibility;
       const GenderVisibility = decBody.genderVisibility;
-      const onBoardingComplete = 0;
-      const AccountValidation = 0;
+      const onBoardingComplete = 1;
+      const AccountValidation = 1;
       const matchMode = decBody.matchMode;
 
       addUser(genderPreference, userId, gender, SexualOrientation, expectationList, expectation);
@@ -320,6 +329,7 @@ accountRouter.post("/Login", dec, async (req, res) => {
                     sesToken: sesToken,
                     onBoardingComplete: userData.onBoardingComplete,
                     matchMode: userData.matchMode,
+                    City: userData.City,
                     applists: appLists,
                   };
 
@@ -393,7 +403,7 @@ accountRouter.post("/SendVerification", dec, (req, res) => {
 });
 
 //CHECK VERIFICATION
-accountRouter.post("/CheckVerification", (req, res) => {
+accountRouter.post("/CheckVerification", dec, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
   const Mail = decBody.mail;
