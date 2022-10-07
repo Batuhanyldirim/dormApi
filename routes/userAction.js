@@ -16,52 +16,6 @@ userActionRouter.post("/trial", function (req, res, next) {
   res.send("userAction route is working");
 });
 
-function sendMatchInfo(userId1, userId, matchId, mod, message_status) {
-  var date = new Date();
-  date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-  var now = date.toISOString().slice(0, 16);
-  var params = {
-    Item: {
-      userChatFirstUserId: {
-        S: `${userId1}`, // Number value.
-      },
-      userChatSecondUserId: {
-        S: `${userId}`, // Number value.
-      },
-      id: {
-        S: `${matchId}`, // Number value.
-      },
-      mod: {
-        S: `${mod}`, // Number value.
-      },
-      status: {
-        S: `${message_status}`, // Number value.
-      },
-      updatedAt: {
-        S: `${now}`, // Number value.
-      },
-      createdAt: {
-        S: `${now}`, // Number value.
-      },
-      unreadMsg: {
-        S: `0`, // Number value.
-      },
-      lastMsgSender: {
-        S: ``, // Number value.
-      },
-    },
-    ReturnConsumedCapacity: "TOTAL",
-    TableName: tableName,
-  };
-  dynamoDB.putItem(params, function (err, data) {
-    if (err) {
-      console.log(err, err.stack);
-    } else {
-      console.log(data);
-    }
-  });
-}
-
 function syncQuery(con, sql) {
   return new Promise((resolve, reject) => {
     con.query(sql, (error, elements) => {
@@ -256,13 +210,6 @@ userActionRouter.post("/LikeDislike", dec, async (req, res) => {
                     try {
                       //console.log("This is matchMode: " + result[0].matchMode);
                       //console.log(result[0].MatchId);
-                      sendMatchInfo(
-                        decBody.userSwiped,
-                        decBody.otherUser,
-                        result[0].MatchId,
-                        result[0].matchMode,
-                        "Active"
-                      );
                     } catch (err) {
                       res.status(406);
                       console.log(err);
@@ -323,9 +270,9 @@ userActionRouter.post("/likeEvent", dec, auth, (req, res) => {
   var sql = `INSERT INTO LikeEvent (EventId, UserId, likeMode) VALUES ('${eventId}', '${UserId}', ${likeMode});`;
   con.query(sql, function (err, result) {
     try {
-      cacheStats[dailyEventLike] += 1;
-      cacheStats[cacheSize] += 1;
-      if (cacheStats[cacheSize] > 50) {
+      cacheStats.dailyEventLike += 1;
+      cacheStats.cacheSize += 1;
+      if (cacheStats.cacheSize > 50) {
         statCache();
       }
       res.send({
@@ -369,12 +316,12 @@ userActionRouter.post("/unmatch", dec, auth, (req, res) => {
   var sql = `DELETE FROM MatchR WHERE MatchId = ${unmatchId}`;
   con.query(sql, function (err, result) {
     try {
-      cacheStats[dailyUnmatch] += 1;
-      cacheStats[cacheSize] += 1;
-      if (cacheStats[cacheSize] > 50) {
+      cacheStats.dailyUnmatch += 1;
+      cacheStats.cacheSize += 1;
+      if (cacheStats.cacheSize > 50) {
         statCache();
       }
-      if (cacheStats[cacheSize] > 50) {
+      if (cacheStats.cacheSize > 50) {
         statCache();
       }
       res.send("Unmatched");

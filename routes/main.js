@@ -125,7 +125,7 @@ mainRouter.post("/registerToken", dec, auth, (req, res) => {
 
 //APP VERSION
 mainRouter.post("/appversion", (req, res) => {
-  const appVersion = "1.4";
+  const appVersion = "1.5.0";
   //console.log("\n\n\nApp version is: " + appVersion);
   var date = new Date();
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
@@ -170,25 +170,11 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "0APHuH1b8g45e9sBYZqmjI4bHPTxzPXB";
+      var deviceId = "01ON8TLiIHzrU4vmnfUHX9HXCiPxwLTu";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
-        var req = {
-          userId: 33,
-          Name: "denemeee",
-          Surname: "dene2",
-          Gender: 1,
-          InterestedSex: 3,
-          Expectation: 4,
-          Major: "CS",
-          City: "İzmir",
-          Burc: 10,
-          Beslenme: 1,
-          Alkol: 3,
-          Sigara: 5,
-          About: "asjdasdjasdkads\nasdasd\n\n\nasdasd",
-        };
+        var req = { userId: 1, kampus: "Sabancı Üniversitesi", city: "İstanbul" };
 
         var encreq = encPipeline(req, result);
 

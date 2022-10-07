@@ -22,31 +22,32 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
 
   var isFive = false;
   var finalResult = [];
+  var resultSet;
 
   if (gender == 1 && interestedSex == 0) {
-    var resultSet = addSet(genderPreference["women"], genderPreference["non_binary"]);
+    resultSet = addSet(genderPreference["women"], genderPreference["non_binary"]);
   } else if (gender == 1 && interestedSex == 1) {
-    var resultSet = getDifference(genderPreference["men"], genderPreference["hetero"]);
+    resultSet = getDifference(genderPreference["men"], genderPreference["hetero"]);
   } else if (gender == 1 && interestedSex == 2) {
-    var resultSet = getDifference(
+    resultSet = getDifference(
       addSet(genderPreference["men"], genderPreference["women"]),
       getIntersection(genderPreference["hetero"], genderPreference["men"])
     );
   } else if (gender == 0 && interestedSex == 1) {
-    var resultSet = addSet(genderPreference["men"], genderPreference["non_binary"]);
+    resultSet = addSet(genderPreference["men"], genderPreference["non_binary"]);
   } else if (gender == 0 && interestedSex == 0) {
-    var resultSet = getDifference(genderPreference["women"], genderPreference["hetero"]);
+    resultSet = getDifference(genderPreference["women"], genderPreference["hetero"]);
   } else if (gender == 0 && interestedSex == 2) {
-    var resultSet = getDifference(
+    resultSet = getDifference(
       addSet(genderPreference["men"], genderPreference["women"]),
       getIntersection(genderPreference["hetero"], genderPreference["women"])
     );
   } else if (gender == 2 && interestedSex == 1) {
-    var resultSet = addSet(genderPreference["men"], genderPreference["non_binary"]);
+    resultSet = addSet(genderPreference["men"], genderPreference["non_binary"]);
   } else if (gender == 2 && interestedSex == 0) {
-    var resultSet = addSet(genderPreference["women"], genderPreference["non_binary"]);
+    resultSet = addSet(genderPreference["women"], genderPreference["non_binary"]);
   } else if (gender == 2 && interestedSex == 2) {
-    var resultSet = getDifference(
+    resultSet = getDifference(
       addSet(genderPreference["women"], genderPreference["men"]),
       genderPreference["hetero"]
     );

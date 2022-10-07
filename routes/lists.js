@@ -7,6 +7,7 @@ import { swipeList } from "../logic/swipeList.js";
 import { choseList } from "../logic/choseList.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { auth } from "../middlewares/authentication.js";
+import { demoAccounts } from "../lists.js";
 
 export const listsRouter = express.Router();
 
@@ -21,11 +22,14 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
 
-  var UserId = decBody.userId;
+  var UserId = decBody.userId ?? 0;
 
-  var campus = decBody.camups; //result4[0].School;
+  var campus = decBody.kampus ?? ""; //result4[0].School;
 
-  var sql = `SELECT * FROM Events WHERE (Kampus = '0' OR Kampus = '${campus}') AND visible = 1 ORDER BY Date ASC;`;
+  var city = decBody.city ?? "İstanbul";
+
+  var sql = `SELECT * FROM Events WHERE city = '${city}' AND (Kampus = '0' OR Kampus = '${campus}') AND visible = 1 ORDER BY Date ASC;`;
+  //console.log(sql);
   con.query(sql, function (err, result) {
     try {
       var sql = `SELECT EventId FROM LikeEvent WHERE UserId = ${UserId} AND UserId NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = '${UserId}')`;
@@ -55,7 +59,22 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
                   }
                 }
               }
-              console.log(event_list);
+
+              var ifCock = false;
+              var fromIdx;
+              for (let i = 0; i < event_list.length; i++) {
+                if (event_list[i].EventId == 668 || event_list[i].EventId == 716) {
+                  fromIdx = i;
+                  ifCock = true;
+                  break;
+                }
+              }
+              if (ifCock) {
+                const element = event_list.splice(fromIdx, 1)[0];
+                event_list.splice(0, 0, element);
+                //console.log(event_list[0]);
+              }
+
               event_list = encPipeline(event_list, secKeys);
               res.send(event_list);
               return;
@@ -180,16 +199,17 @@ listsRouter.post("/eventParticipants", dec, auth, (req, res) => {
 
               var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM 
               User WHERE UserId IN (SELECT UserId FROM LikeEvent WHERE EventId = ${eventId} AND Invisible = 0 AND likeMode = 0) 
-              AND UserId IN ${resultSwipeId} AND UserId != ${userId} AND ((BlockCampus = 1 AND UserID != '1118' AND UserID != '1206' AND UserId != '1411' AND School != '${userData.School}') OR 
-              (OnlyCampus = 1 AND School = '${userData.School}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId NOT IN 
-              (SELECT otherUser FROM ActedOther WHERE userActed = '${userId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${userId}'); `;
+              AND UserId IN ${resultSwipeId} AND UserId != ${userId} AND ((BlockCampus = 1
+              AND School != '${userData.School}') OR (OnlyCampus = 1 AND School = '${userData.School}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId NOT IN 
+              (SELECT otherUser FROM ActedOther WHERE userActed = '${userId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${userId}'); 
+              AND UserID NOT IN ${demoAccounts} AND Invisible = 0`;
             } else if (result2[0].likeMode == 1) {
               var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM 
-              User WHERE UserId IN (SELECT UserId FROM LikeEvent WHERE EventId = ${eventId} AND UserID != '1118' AND UserID != '1206' AND UserId != '1411' AND Invisible = 0 AND likeMode = 1) 
-              AND UserId != ${userId} AND ((BlockCampus = 1 AND School != '${userData.School}') OR (OnlyCampus = 1 AND School = '${userData.School}') 
-              OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = '${userId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${userId}'); `;
+              User WHERE UserId IN (SELECT UserId FROM LikeEvent WHERE EventId = ${eventId} AND Invisible = 0 AND likeMode = 1) AND UserId != ${userId} AND ((BlockCampus = 1 
+              AND School != '${userData.School}') OR (OnlyCampus = 1 AND School = '${userData.School}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = '${userId}') 
+              AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${userId}') AND UserID NOT IN ${demoAccounts} AND Invisible = 0`;
             }
-
+            console.log("sql: ", sql);
             con.query(sql, function (err, result) {
               try {
                 var swipe_list = [];
@@ -222,7 +242,8 @@ listsRouter.post("/eventParticipants", dec, auth, (req, res) => {
                             }
                           }
                         }
-                        //console.log(swipe_list);
+
+                        console.log(swipe_list);
                         swipe_list = swipe_list.sort(() => Math.random() - 0.5);
                         swipe_list = encPipeline(swipe_list, secKeys);
 

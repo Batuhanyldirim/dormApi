@@ -91,9 +91,10 @@ export async function swipeList(
       if (resultSwipeId.length > 2)
         resultSwipeId = resultSwipeId.substring(0, resultSwipeId.length - 1);
       resultSwipeId += ")";
+
       var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM User 
   WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} Birth_date < '${maxBirth}' AND Birth_date > '${minBirth}' AND matchMode = 0 
-  AND Invisible = 0 AND AccountValidation = 1 AND ((BlockCampus = 1 AND School != '${school}') OR (OnlyCampus = 1 AND School 
+  AND Invisible = 0 AND accountVisibility = 1 AND ((BlockCampus = 1 AND School != '${school}') OR (OnlyCampus = 1 AND School 
     = '${school}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId IN ${resultSwipeId} AND UserId NOT IN (SELECT otherUser FROM ActedOther 
     WHERE userActed = '${UserId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${UserId}');`;
     } else if (matchMode == 1) {
@@ -107,7 +108,7 @@ export async function swipeList(
       var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM User 
   WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} matchMode = 1 AND Birth_date < '${maxBirth}' AND ((BlockCampus = 1 AND School != '${school}') 
   OR (OnlyCampus = 1 AND School = '${school}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND Birth_date > '${minBirth}' 
-  AND AccountValidation = 1 AND Invisible = 0 AND Gender IN ${genderList} AND UserId NOT IN (SELECT otherUser 
+  AND accountVisibility = 1 AND Invisible = 0 AND Gender IN ${genderList} AND UserId NOT IN (SELECT otherUser 
     FROM ActedOther WHERE userActed = '${UserId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${UserId}');`;
     }
   } catch (err) {

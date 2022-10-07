@@ -1,4 +1,5 @@
 import { cacheStats } from "../lists.js";
+import axios from "axios";
 
 export function statCache() {
   //add headers

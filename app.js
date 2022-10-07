@@ -15,7 +15,7 @@ import { profileRouter } from "./routes/profile.js";
 import { userActionRouter } from "./routes/userAction.js";
 import { listsRouter } from "./routes/lists.js";
 import { mainRouter } from "./routes/main.js";
-
+import { statCache } from "./logic/statInfo.js";
 dotenv.config();
 
 AWS.config.update({
@@ -40,6 +40,8 @@ app.use("/userAction", userActionRouter);
 app.use("/lists", listsRouter);
 
 updateBoth(genderPreference, expectationList);
+
+statCache();
 
 /* 
 const con = mysql.createConnection({

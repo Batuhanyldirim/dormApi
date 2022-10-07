@@ -109,7 +109,7 @@ profileRouter.post("/FreezeAccount", dec, auth, (req, res) => {
   let decBody = req.body.decBody;
   const UserId = decBody.userId;
 
-  var sql = `UPDATE User SET AccountValidation = 0, frozen = 1 WHERE UserId = ${UserId}`;
+  var sql = `UPDATE User SET accountVisibility = 0, frozen = 1 WHERE UserId = ${UserId}`;
   con.query(sql, function (err, result) {
     try {
       cacheStats[frozenUser] += 1;
@@ -255,6 +255,28 @@ profileRouter.post("/Interests", dec, auth, (req, res) => {
   });
 });
 
+//INTERESTS
+profileRouter.post("/updateTutorial", dec, auth, (req, res) => {
+  let secKeys = req.body.secKeys;
+  let decBody = req.body.decBody;
+  const UserId = decBody.userId;
+
+  const tutorialName = decBody.tutorialName;
+
+  var sql = `UPDATE User SET ${tutorialName} = 1`;
+  con.query(sql, function (err, result) {
+    try {
+      res.send("update is successful");
+    } catch (err) {
+      res.send(err);
+    }
+  });
+  //swipeResult = await swipeList(con, "-1");
+  res.send({
+    Message: "Update is successfull",
+  });
+});
+
 //Securephoto link
 profileRouter.post("/SecurePhotoLink", dec, auth, cors(corsOptions), async (req, res) => {
   let secKeys = req.body.secKeys;
@@ -335,7 +357,7 @@ profileRouter.post("/deleteAccount", dec, auth, (req, res) => {
       const SexualOrientation = userData.SexualOrientation;
       const SOVisibility = userData.SOVisibility;
       const GenderVisibility = userData.GenderVisibility;
-      const AccountValidation = userData.AccountValidation;
+      const accountVisibility = userData.accountVisibility;
       const Alkol = userData.Alkol;
       const Sigara = userData.Sigara;
       const Burc = userData.Burc;
@@ -349,11 +371,11 @@ profileRouter.post("/deleteAccount", dec, auth, (req, res) => {
 
       var sql2 = `INSERT INTO DeletedUser (Mail, Name, Surname, City, Birth_date, School, Gender, Password, BlockCampus, OnlyCampus, 
                               Invisible, PremiumEndDate, LikeCount, SuperLikeCount, SwipeRefreshTime, UserId, Expectation, InterestedSex, SexualOrientation, 
-                              SOVisibility, GenderVisibility, AccountValidation, Alkol, Sigara, Burc, Beslenme, Major, Din, About, CreatedDate, matchMode, 
+                              SOVisibility, GenderVisibility, accountVisibility, Alkol, Sigara, Burc, Beslenme, Major, Din, About, CreatedDate, matchMode, 
                               reportDegree, deletionDate) VALUES ('${mail}','${name}','${surName}',
                               '${city}','${bDay}','${school}','${gender}','${password}','${blockCampus}','${onlyCampus}','${invisible}','${premiumDate}',
                               '${LikeCount}','${SuperLikeCount}','${SwipeRefreshTime}','${UserId}','${Expectation}','${InterestedSex}','${SexualOrientation}',
-                              '${SOVisibility}', '${GenderVisibility}', '${AccountValidation}', '${Alkol}', '${Sigara}', '${Burc}', '${Beslenme}',
+                              '${SOVisibility}', '${GenderVisibility}', '${accountVisibility}', '${Alkol}', '${Sigara}', '${Burc}', '${Beslenme}',
                               '${Major}', '${Din}', '${About}', '${CreatedDate}', '${matchMode}', '${reportDegree}', '${now}');`;
 
       con.query(sql2, function (err, result) {

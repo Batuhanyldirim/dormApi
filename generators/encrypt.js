@@ -1,8 +1,8 @@
 import CryptoES from "crypto-es";
 
-const algorithm = "aes-256-cbc";
+/* const algorithm = "aes-256-cbc";
 const Securitykey = "O7SzQkunl5HUBl3dgbWPBRJpxAyGA2Y9"; //crypto.randomBytes(32);
-const initVector = "O7SzQkunl5HUBl3d"; //crypto.randomBytes(16);
+const initVector = "O7SzQkunl5HUBl3d"; //crypto.randomBytes(16); */
 
 export function encryiptData(Securitykey, initVector, message) {
   let encrypted = CryptoES.AES.encrypt(message, Securitykey, {

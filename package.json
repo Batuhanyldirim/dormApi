@@ -22,5 +22,8 @@
     "nodemailer": "^6.7.2",
     "pm2": "^5.2.0",
     "sql": "^0.78.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.24.0"
   }
 }
