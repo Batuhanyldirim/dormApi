@@ -55,3 +55,23 @@ export function bulkInjectionCheck(input) {
 export function between(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+export function eventOrder(idList, eventList) {
+  var idMap = {};
+  var promotedEvents = [];
+
+  for (var i = 0; i < idList.length; i++) {
+    if (idMap[idList[i]] == undefined) {
+      idMap[idList[i]] = 1;
+    }
+  }
+
+  for (var i = 0; i < eventList.length; i++) {
+    if (idMap[eventList[i].EventId] != undefined) {
+      promotedEvents.push(eventList[i]);
+      eventList.splice(i, 1);
+    }
+  }
+
+  return promotedEvents.concat(eventList);
+}

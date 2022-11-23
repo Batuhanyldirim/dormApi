@@ -8,7 +8,7 @@ import { choseList } from "../logic/choseList.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { auth } from "../middlewares/authentication.js";
 import { demoAccounts } from "../lists.js";
-import { syncQuery, makeSqlList } from "../logic/functions.js";
+import { syncQuery, makeSqlList, eventOrder } from "../logic/functions.js";
 
 export const listsRouter = express.Router();
 
@@ -61,7 +61,7 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
                 }
               }
 
-              var ifCock = false;
+              /* var ifCock = false;
               var fromIdx;
               for (let i = 0; i < event_list.length; i++) {
                 if (event_list[i].EventId == 1208 || event_list[i].EventId == 1123) {
@@ -74,7 +74,8 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
                 const element = event_list.splice(fromIdx, 1)[0];
                 event_list.splice(0, 0, element);
                 //console.log(event_list[0]);
-              }
+              } */
+              event_list = eventOrder([1208, 1192], event_list);
 
               event_list = encPipeline(event_list, secKeys);
               res.send(event_list);

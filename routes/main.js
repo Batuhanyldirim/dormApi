@@ -170,13 +170,14 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "09Xhqt401D0du20OxK47CNvjHniRrVLe";
+      var deviceId = "06GSF30t3gqbsFmNdhMy9D965AGrLNxb";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
         var req = {
-          mail: "ybatuhan@sabanciuniv.edu SLEEP(10)",
-          password: "673e87fb67fd22833db06f00f2e45470fbcbd381554fa80a0fa19a48a062ccbd",
+          userId: 1,
+          kampus: "Sabancı Üniversitesi",
+          city: "İstanbul",
         };
 
         var encreq = encPipeline(req, result);
