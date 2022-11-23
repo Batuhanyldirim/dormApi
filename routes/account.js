@@ -8,6 +8,7 @@ import { appLists, genderPreference, expectationList } from "../lists.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { setDate } from "../generators/endDateSet.js";
 import { checkMail } from "../logic/functions.js";
+import { injectionCheck } from "../logic/functions.js";
 
 export const accountRouter = express.Router();
 
@@ -29,126 +30,133 @@ accountRouter.post("/register", dec, async (req, res) => {
   const mail = decBody.mail;
   const mailKey = decBody.mailKey ?? -1;
   //if (mailKey == -1 || checkMail(mail, mailKey)) {
-  if (true) {
-    var UserVerCode = decBody.verification;
 
-    var sql = `SELECT * FROM Verification WHERE VerMail = '${mail}';`;
+  if (injectionCheck(mail)) {
+    console.log(err);
+    res.status(400);
+    res.send(err);
+  } else {
+    if (true) {
+      var UserVerCode = decBody.verification;
 
-    con.query(sql, function (err, result) {
-      try {
-        if (result[0] == undefined) {
-          res.status(400);
-          res.send({ Verification: -1 });
-        } else if (result[0]["VerCode"] == UserVerCode) {
-          var sql = `DELETE FROM Verification WHERE VerMail = '${mail}';`;
-          con.query(sql, async function (err, result) {
-            try {
-              const name = decBody.name;
-              const surName = decBody.surName;
-              const city = decBody.city;
-              const bDay = decBody.bDay;
-              const school = decBody.school;
-              const password = decBody.password;
+      var sql = `SELECT * FROM Verification WHERE VerMail = '${mail}';`;
 
-              const blockCampus = false;
-              const onlyCampus = false;
-              const invisible = false;
-              const accountVisibility = 0;
-              const likeCount = 20;
-              const superLikeCount = 5;
-              const onBoardingComplete = 0;
-              const matchMode = 1;
-              const reportDegree = 0;
-              const SwipeRefreshTime = await setDate();
-              const frozen = 0;
-              const accountValidation = 0;
+      con.query(sql, function (err, result) {
+        try {
+          if (result[0] == undefined) {
+            res.status(400);
+            res.send({ Verification: -1 });
+          } else if (result[0]["VerCode"] == UserVerCode) {
+            var sql = `DELETE FROM Verification WHERE VerMail = '${mail}';`;
+            con.query(sql, async function (err, result) {
+              try {
+                const name = decBody.name;
+                const surName = decBody.surName;
+                const city = decBody.city;
+                const bDay = decBody.bDay;
+                const school = decBody.school;
+                const password = decBody.password;
 
-              var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
+                const blockCampus = false;
+                const onlyCampus = false;
+                const invisible = false;
+                const accountVisibility = 0;
+                const likeCount = 20;
+                const superLikeCount = 5;
+                const onBoardingComplete = 0;
+                const matchMode = 1;
+                const reportDegree = 0;
+                const SwipeRefreshTime = await setDate();
+                const frozen = 0;
+                const accountValidation = 0;
 
-              con.query(sql, function (err, result) {
-                try {
-                  if (result == "") {
-                    var date = new Date();
-                    date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-                    var now = date.toISOString().slice(0, -5);
-                    var sql = `INSERT INTO User (Mail, Name, Surname, City, Birth_date, School, Password, BlockCampus, OnlyCampus, 
+                var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
+
+                con.query(sql, function (err, result) {
+                  try {
+                    if (result == "") {
+                      var date = new Date();
+                      date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+                      var now = date.toISOString().slice(0, -5);
+                      var sql = `INSERT INTO User (Mail, Name, Surname, City, Birth_date, School, Password, BlockCampus, OnlyCampus, 
                             Invisible, accountVisibility, CreatedDate, LikeCount, SuperLikeCount, onBoardingComplete, matchMode, 
                             SwipeRefreshTime, reportDegree, frozen, accountValidation) VALUES ('${mail}','${name}','${surName}','${city}',
                             '${bDay}', '${school}', '${password}', '${blockCampus}', '${onlyCampus}', '${invisible}', '${accountVisibility}', 
                             '${now}', ${likeCount}, ${superLikeCount}, ${onBoardingComplete}, '${matchMode}', '${SwipeRefreshTime}', '${reportDegree}', 
                             '${frozen}', ${accountValidation});`;
-                    con.query(sql, function (err, result) {
-                      try {
-                        var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
-                        var CreatedId;
-                        con.query(sql, async function (err, result) {
-                          try {
-                            var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
-                            CreatedId = userData.UserId;
+                      con.query(sql, function (err, result) {
+                        try {
+                          var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
+                          var CreatedId;
+                          con.query(sql, async function (err, result) {
+                            try {
+                              var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
+                              CreatedId = userData.UserId;
 
-                            var sesToken = await sessionTokenGenerator();
+                              var sesToken = await sessionTokenGenerator();
 
-                            var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
-                            con.query(sql, function (err, result) {
-                              try {
-                              } catch (err) {
-                                console.log(err);
-                                res.send(err);
-                              }
-                            });
-                            var myres = {
-                              userId: `${userData.UserId}`,
-                              sesToken: sesToken,
-                            };
+                              var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
+                              con.query(sql, function (err, result) {
+                                try {
+                                } catch (err) {
+                                  console.log(err);
+                                  res.send(err);
+                                }
+                              });
+                              var myres = {
+                                userId: `${userData.UserId}`,
+                                sesToken: sesToken,
+                              };
 
-                            myres = encPipeline(myres, secKeys);
+                              myres = encPipeline(myres, secKeys);
 
-                            res.send(myres);
-                          } catch (err) {
-                            console.log(err);
-                            res.status(400);
-                            res.send(err);
-                          }
-                        });
-                      } catch (err) {
-                        console.log(err);
-                        res.status(400);
-                        res.send(err);
-                      }
-                    });
-                  } else {
-                    //console.log("This user is already exist");
+                              res.send(myres);
+                            } catch (err) {
+                              console.log(err);
+                              res.status(400);
+                              res.send(err);
+                            }
+                          });
+                        } catch (err) {
+                          console.log(err);
+                          res.status(400);
+                          res.send(err);
+                        }
+                      });
+                    } else {
+                      //console.log("This user is already exist");
 
+                      res.status(400);
+                      res.send("This mail is already exist");
+                    }
+                  } catch (err) {
                     res.status(400);
-                    res.send("This mail is already exist");
+                    res.send(err);
                   }
-                } catch (err) {
-                  res.status(400);
-                  res.send(err);
-                }
-              });
-            } catch (err) {
-              console.log(err);
-              res.status(400);
-              res.send(err);
-            }
-          });
+                });
+              } catch (err) {
+                console.log(err);
+                res.status(400);
+                res.send(err);
+              }
+            });
 
-          //DELETE FROM `table_name` [WHERE condition];
-        } else {
+            //DELETE FROM `table_name` [WHERE condition];
+          } else {
+            console.log(err);
+            res.status(400);
+            res.send({ Verification: -1 });
+          }
+        } catch (err) {
           console.log(err);
           res.status(400);
-          res.send({ Verification: -1 });
+          res.send(err);
         }
-      } catch (err) {
-        console.log(err);
-        res.status(400);
-        res.send(err);
-      }
-    });
-  } else {
-    res.status(400);
-    res.send("Invalid e-mail");
+      });
+    } else {
+      res.status(400);
+      res.send("Invalid e-mail");
+    }
   }
 });
 
@@ -267,10 +275,11 @@ accountRouter.post("/Login", dec, async (req, res) => {
     UserId: "-1",
   };
 
-  if (
-    !mail.includes(";") &&
-    !(mail.includes("(") && mail.includes(")") && mail.includes("SLEEP"))
-  ) {
+  if (injectionCheck(mail)) {
+    console.log("attack");
+    res.status(400);
+    res.send("Böyle bir kullanıcı yok");
+  } else {
     var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
     con.query(sql, function (err, result) {
       try {
@@ -377,10 +386,6 @@ accountRouter.post("/Login", dec, async (req, res) => {
         console.log(err);
       }
     });
-  } else {
-    console.log("attack");
-    res.status(400);
-    res.send("Böyle bir kullanıcı yok");
   }
 });
 
