@@ -150,7 +150,7 @@ export async function swipeList(
               swipe_list = swipe_list.sort(() => Math.random() - 0.5);
               if (swipe_list.length > 40) swipe_list = swipe_list.slice(0, 40);
               //console.log(swipe_list.length);
-              //console.log("swipe_list: ", swipe_list);
+              //console.log("swipe_list len: ", swipe_list.length);
               swipe_list = encPipeline(swipe_list, secKeys);
 
               res.send(swipe_list);

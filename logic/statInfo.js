@@ -16,7 +16,7 @@ export function statCache() {
     .then((response) => {
       //receive response
       if (response.statusCode == 200) {
-        console.log(response);
+        //console.log(response);
         cacheStats = {
           cacheSize: 0,
           frozenUser: 0,

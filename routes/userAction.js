@@ -40,8 +40,8 @@ userActionRouter.post("/LikeDislike", dec, async (req, res) => {
       const otherUser = decBody.otherUser;
       const matchMode = decBody.matchMode;
       var eventId = decBody?.eventId;
+      var eventName = decBody.eventName ?? "";
       var date = new Date();
-      date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
       var now = date.toISOString().slice(0, 16);
 
       var sql8 = `SELECT LikeCount, SuperLikeCount, SwipeRefreshTime FROM User WHERE Userid = ${userLiked};`;
@@ -80,19 +80,32 @@ userActionRouter.post("/LikeDislike", dec, async (req, res) => {
                     var sql = `INSERT INTO LikeOther (userLiked, otherUser, LikeDate, Superlike, likeMode, eventId) VALUES ('${userLiked}','${otherUser}','${actionDate}','0', '${matchMode}', ${eventId});`;
                     var sql7 = `INSERT INTO ActedOther (userActed, otherUser, ActDate, Superlike) VALUES ('${userLiked}','${otherUser}','${actionDate}','0');`;
                     var sql9 = `UPDATE User SET LikeCount = ${likeCount} WHERE UserId = ${userLiked};`;
-                    likeNotification(userLiked, otherUser, eventId, token);
+
+                    try {
+                      likeNotification(userLiked, otherUser, eventId, eventName, token);
+                    } catch (err) {
+                      console.log({ err });
+                    }
                   } else if (isLike == 0 && likeCount < 2) {
                     likeCount = 19;
                     var sql = `INSERT INTO LikeOther (userLiked, otherUser, LikeDate, Superlike, likeMode, eventId) VALUES ('${userLiked}','${otherUser}','${actionDate}','0', '${matchMode}', ${eventId});`;
                     var sql7 = `INSERT INTO ActedOther (userActed, otherUser, ActDate, Superlike) VALUES ('${userLiked}','${otherUser}','${actionDate}','0');`;
                     var sql9 = `UPDATE User SET LikeCount = ${19} WHERE UserId = ${userLiked}`;
-                    likeNotification(userLiked, otherUser, eventId, token);
+                    try {
+                      likeNotification(userLiked, otherUser, eventId, eventName, token);
+                    } catch (err) {
+                      console.log({ err });
+                    }
                   } else if (isLike == 1) {
                     superLikeCount = superLikeCount - 1;
                     var sql = `INSERT INTO LikeOther (userLiked, otherUser, LikeDate, Superlike, likeMode, eventId) VALUES ('${userLiked}','${otherUser}','${actionDate}','1', '${matchMode}', ${eventId});`;
                     var sql7 = `INSERT INTO ActedOther (userActed, otherUser, ActDate, Superlike) VALUES ('${userLiked}','${otherUser}','${actionDate}','1');`;
                     var sql9 = `UPDATE User SET SuperLikeCount = ${superLikeCount} WHERE UserId = ${userLiked};`;
-                    likeNotification(userLiked, otherUser, eventId, token);
+                    try {
+                      likeNotification(userLiked, otherUser, eventId, eventName, token);
+                    } catch (err) {
+                      console.log({ err });
+                    }
                   } else if (isLike == 2) {
                     var sql = `INSERT INTO DislikeOther (PersonDisliked, otherPerson, DislikeDate) VALUES ('${userLiked}','${otherUser}','${actionDate}');`;
                     var sql7 = `INSERT INTO ActedOther (userActed, otherUser, ActDate, Superlike) VALUES ('${userLiked}','${otherUser}','${actionDate}','0');`;

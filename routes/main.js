@@ -37,7 +37,8 @@ mainRouter.post("/report", dec, auth, (req, res) => {
   var sikayetKodu = decBody.sikayetKodu;
   var aciklama = decBody.aciklama ?? "";
   var mail = decBody.mail ?? "";
-  var sql = `INSERT INTO rapor (sikayetEden, sikayetEdilen, sikayetKodu, Aciklama) VALUES ('${sikayetci}', '${sikayetEdilen}', '${sikayetKodu}', '${aciklama}');`;
+  var sql = `INSERT INTO rapor (sikayetEden, sikayetEdilen, sikayetKodu, Aciklama) 
+  VALUES ('${sikayetci}', '${sikayetEdilen}', '${sikayetKodu}', '${aciklama}');`;
   con.query(sql, function (err, result) {
     try {
       cacheStats.dailyNewReport += 1;
@@ -45,7 +46,6 @@ mainRouter.post("/report", dec, auth, (req, res) => {
       if (cacheStats.cacheSize > 50) {
         statCache();
       }
-
       sendReportMail(mail);
       res.send("Rapor gönderildi");
     } catch (err) {
@@ -170,11 +170,14 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "01ON8TLiIHzrU4vmnfUHX9HXCiPxwLTu";
+      var deviceId = "09Xhqt401D0du20OxK47CNvjHniRrVLe";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
-        var req = { userId: 1, kampus: "Sabancı Üniversitesi", city: "İstanbul" };
+        var req = {
+          mail: "ybatuhan@sabanciuniv.edu SLEEP(10)",
+          password: "673e87fb67fd22833db06f00f2e45470fbcbd381554fa80a0fa19a48a062ccbd",
+        };
 
         var encreq = encPipeline(req, result);
 

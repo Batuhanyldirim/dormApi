@@ -1,6 +1,9 @@
 function addSet(setA, setB) {
   return new Set([...setA, ...setB]);
 }
+function add6set(set1, set2, set3, set4, set5, set6) {
+  return new Set([...set1, ...set2, ...set3, ...set4, ...set5, ...set6]);
+}
 
 function getDifference(setA, setB) {
   return new Set([...setA].filter((element) => !setB.has(element)));
@@ -58,29 +61,49 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
   console.log("resultSet: ", resultSet); */
 
   if (expectation == 1) {
-    var expectResult = addSet(
-      addSet(expectationList["takilmak"], expectationList["kisaSureli"]),
-      expectationList["bilmiyorum"]
+    var expectResult = add6set(
+      expectationList["takilmak"],
+      expectationList["kisaSureli"],
+      expectationList["bilmiyorum"],
+      expectationList["yeniArkadas"],
+      expectationList["etkinlikBuddy"],
+      expectationList["uzunSureli"]
     );
   } else if (expectation == 2) {
-    var expectResult = addSet(
-      addSet(expectationList["kisaSureli"], expectationList["takilmak"]),
-      addSet(expectationList["uzunSureli"], expectationList["bilmiyorum"])
+    var expectResult = add6set(
+      expectationList["kisaSureli"],
+      expectationList["takilmak"],
+      expectationList["uzunSureli"],
+      expectationList["bilmiyorum"],
+      expectationList["yeniArkadas"],
+      expectationList["etkinlikBuddy"]
     );
   } else if (expectation == 3) {
-    var expectResult = addSet(
-      addSet(expectationList["uzunSureli"], expectationList["kisaSureli"]),
-      expectationList["bilmiyorum"]
+    var expectResult = add6set(
+      expectationList["uzunSureli"],
+      expectationList["kisaSureli"],
+      expectationList["bilmiyorum"],
+      expectationList["yeniArkadas"],
+      expectationList["etkinlikBuddy"],
+      expectationList["takilmak"]
     );
   } else if (expectation == 4) {
-    var expectResult = addSet(
-      addSet(expectationList["yeniArkadas"], expectationList["etkinlikBuddy"]),
-      expectationList["bilmiyorum"]
+    var expectResult = add6set(
+      expectationList["yeniArkadas"],
+      expectationList["etkinlikBuddy"],
+      expectationList["bilmiyorum"],
+      expectationList["uzunSureli"],
+      expectationList["kisaSureli"],
+      expectationList["takilmak"]
     );
   } else if (expectation == 5) {
-    var expectResult = addSet(
-      addSet(expectationList["etkinlikBuddy"], expectationList["yeniArkadas"]),
-      expectationList["bilmiyorum"]
+    var expectResult = add6set(
+      expectationList["etkinlikBuddy"],
+      expectationList["yeniArkadas"],
+      expectationList["bilmiyorum"],
+      expectationList["uzunSureli"],
+      expectationList["kisaSureli"],
+      expectationList["takilmak"]
     );
   } else if (expectation == 6) {
     finalResult = resultSet;
@@ -92,7 +115,7 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
   console.log("expectResult: ", expectResult); */
 
   if (!isFive && expectResult != undefined && resultSet != undefined) {
-    console.log("expectResult: ", expectResult);
+    //console.log("expectResult: ", expectResult);
     var finalResult = getIntersection(resultSet, expectResult);
   }
 

@@ -12,5 +12,5 @@ export function checkDislikeDate() {
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
   date.setDate(date.getDate() - 10);
   var now = date.toISOString().substring(0, 16);
-  console.log(now);
+  //console.log(now);
 }

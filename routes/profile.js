@@ -10,10 +10,11 @@ import { updateBoth, deleteUser } from "../logic/updateGenderPref.js";
 import { generateSecureLink } from "../generators/s3link.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { auth } from "../middlewares/authentication.js";
+import { swipeList } from "../logic/swipeList.js";
 
 export const profileRouter = express.Router();
 
-function syncQuery(con, sql) {
+function syncQuery(sql) {
   return new Promise((resolve, reject) => {
     con.query(sql, (error, elements) => {
       if (error) {
@@ -62,6 +63,56 @@ profileRouter.post("/ChangeVisibility", dec, auth, (req, res) => {
       res.send(err);
     }
   });
+});
+
+//CHANGE BLUR
+profileRouter.post("/changeBlur", dec, auth, async (req, res) => {
+  let secKeys = req.body.secKeys;
+  let decBody = req.body.decBody;
+  const userId = decBody.userId;
+  const otherUser = decBody.otherUser;
+
+  var sql = `SELECT blurTime, blurCount FROM User WHERE UserId = ${userId}`;
+
+  var blur = await syncQuery(sql);
+  var myCount = blur[0].blurCount;
+  blur = blur[0].blurTime;
+
+  var date = new Date();
+  var now = date.toISOString();
+  var blurTime = new Date(`${blur}`);
+  //console.log("blurTime: ", blurTime);
+  var diff = date.getTime() - blurTime.getTime();
+
+  if (diff > 86400000 && myCount == 0) {
+    sql = `UPDATE User SET blurCount = 1 WHERE UserId = ${userId}`;
+    await syncQuery(sql);
+  }
+  /*   console.log("blur[0].blurCount: ", myCount);
+  console.log("blur[0].blurCount > 0: ", myCount > 0);
+  console.log("(diff > 86400000 && myCount == 0): ", diff > 86400000 && myCount == 0); */
+
+  if (myCount > 0 || (diff > 86400000 && myCount == 0)) {
+    sql = `UPDATE LikeOther SET blur = 0 WHERE userLiked = ${otherUser} AND otherUser = ${userId};`;
+    await syncQuery(sql);
+    if (diff > 86400000 && myCount == 0) {
+      sql = `UPDATE User SET blurTime = '${now}' WHERE UserId = ${userId}`;
+      await syncQuery(sql);
+      res.send({ blurCount: 0 });
+    }
+    if (myCount == 1) {
+      sql = `UPDATE User SET blurCount = blurCount - 1, blurTime = '${now}' WHERE UserId = ${userId}`;
+      await syncQuery(sql);
+      res.send({ blurCount: 0 });
+    } else {
+      sql = `UPDATE User SET blurCount = blurCount - 1 WHERE UserId = ${userId}`;
+      await syncQuery(sql);
+      res.send({ blurCount: myCount - 1 });
+    }
+  } else {
+    res.status(400);
+    res.send("Blur count has finished");
+  }
 });
 
 //Block Campus
@@ -191,6 +242,63 @@ profileRouter.post("/matchmode", dec, auth, (req, res) => {
   });
 });
 
+//MATCH MODE2
+profileRouter.post("/matchmode2", dec, auth, (req, res) => {
+  let secKeys = req.body.secKeys;
+  let decBody = req.body.decBody;
+  const userId = decBody.userId;
+
+  const matchMode = decBody.matchMode;
+
+  var sql = `UPDATE User SET matchMode = '${matchMode}' WHERE UserId = '${userId}';`;
+  con.query(sql, function (err, result) {
+    try {
+      var minAge = decBody.age[0];
+      var maxAge = decBody.age[1];
+      var cinsiyet = decBody.cinsiyet;
+
+      var alcohol = decBody.alkol;
+      var cigar = decBody.sigara;
+      var food = decBody.yemek;
+      var sql2 = `SELECT Gender, InterestedSex, matchMode, Expectation, BlockCampus, OnlyCampus, School, Invisible FROM User WHERE UserId =${userId};`;
+      con.query(sql2, function (err, result2) {
+        try {
+          var userData = JSON.parse(JSON.stringify(result2).slice(1, -1));
+          if (userData.Invisible) {
+            res.status(411);
+            res.send("Invisible");
+          } else {
+            swipeList(
+              userId,
+              minAge,
+              maxAge,
+              cinsiyet,
+              alcohol,
+              cigar,
+              res,
+              userData.Gender,
+              userData.InterestedSex,
+              genderPreference,
+              expectationList,
+              userData.matchMode,
+              userData.Expectation,
+              userData.BlockCampus,
+              userData.OnlyCampus,
+              userData.School,
+              secKeys
+            );
+          }
+        } catch (err) {
+          console.log(err);
+          res.send("error");
+        }
+      });
+    } catch (err) {
+      res.send("matchMode Error");
+    }
+  });
+});
+
 //IDENTITY UPDATE
 profileRouter.post("/IdentityUpdate", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
@@ -214,7 +322,6 @@ profileRouter.post("/IdentityUpdate", dec, auth, (req, res) => {
   About = '${About}', City = '${City}'  WHERE UserId = ${UserId};`;
   con.query(sql, async function (err, result) {
     try {
-      console.log("query : ", sql);
       //swipeResult = await swipeList(con, "-1");
       res.send({
         Message: "Update is successfull",
@@ -297,7 +404,7 @@ profileRouter.post("/AddPhotoLink", dec, auth, async (req, res) => {
   var UserId = decBody.userId;
 
   var sql2 = `DELETE FROM Photos WHERE UserId=${UserId};`;
-  await syncQuery(con, sql2);
+  await syncQuery(sql2);
 
   for (var i = 0; i < decBody.photos.length; i++) {
     var photoName = decBody.photos[i].PhotoLink.split("/");
@@ -305,7 +412,7 @@ profileRouter.post("/AddPhotoLink", dec, auth, async (req, res) => {
     var photoLink = "https://d13pzveje1c51z.cloudfront.net/" + photoName;
     //console.log("this is front link: ", photoLink);
     var sql = `INSERT INTO Photos (Photo_Order, PhotoLink, UserId) VALUES (${decBody.photos[i].Photo_Order} , '${photoLink}', ${UserId});`;
-    await syncQuery(con, sql);
+    await syncQuery(sql);
   }
   //swipeResult = await swipeList(con, "-1");
   res.send({

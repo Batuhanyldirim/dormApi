@@ -45,7 +45,7 @@ export function decPipeline(reqBody, secKeys) {
 
     return JSON.parse(receivedMessage);
   } catch (err) {
-    console.log("\n\nThis is secKeys: ", secKeys, "\n");
-    console.log("This is error: ", err);
+    //console.log("\n\nThis is secKeys: ", secKeys, "\n");
+    //console.log("This is error: ", err);
   }
 }

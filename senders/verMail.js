@@ -1,5 +1,11 @@
 import AWS from "aws-sdk";
 
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCES_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: "eu-central-1",
+});
+
 export function sendVerMail(to_mail, verCode, isNewUser, from_mail = "noreply@meetdorm.com") {
   if (isNewUser) {
     var body_text = `
@@ -60,7 +66,7 @@ https://www.meetdorm.com/
   // Handle promise's fulfilled/rejected states
   sendPromise
     .then(function (data) {
-      console.log(data.MessageId);
+      //console.log(data.MessageId);
     })
     .catch(function (err) {
       console.error(err, err.stack);
@@ -101,7 +107,7 @@ export function sendReportMail(to_mail, from_mail = "noreply@meetdorm.com") {
   // Handle promise's fulfilled/rejected states
   sendPromise
     .then(function (data) {
-      console.log(data.MessageId);
+      //console.log(data.MessageId);
     })
     .catch(function (err) {
       console.error(err, err.stack);

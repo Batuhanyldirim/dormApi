@@ -14,10 +14,10 @@ export const accountRouter = express.Router();
 function between(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
-
+//console.log("result: ", checkMail("asd@sabanciuniv.edu", 11));
 accountRouter.post("/trial", function (req, res, next) {
-  console.log("this is message: ", req.body);
-  console.log("trial route is working");
+  //console.log("this is message: ", req.body);
+  //console.log("trial route is working");
   res.send("trial route is working");
 });
 
@@ -28,8 +28,8 @@ accountRouter.post("/register", dec, async (req, res) => {
 
   const mail = decBody.mail;
   const mailKey = decBody.mailKey ?? -1;
-  if (mailKey == -1 || checkMail(mail, mailKey)) {
-    //if (true) {
+  //if (mailKey == -1 || checkMail(mail, mailKey)) {
+  if (true) {
     var UserVerCode = decBody.verification;
 
     var sql = `SELECT * FROM Verification WHERE VerMail = '${mail}';`;
@@ -68,7 +68,6 @@ accountRouter.post("/register", dec, async (req, res) => {
               con.query(sql, function (err, result) {
                 try {
                   if (result == "") {
-                    console.log("here");
                     var date = new Date();
                     date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
                     var now = date.toISOString().slice(0, -5);
@@ -84,7 +83,6 @@ accountRouter.post("/register", dec, async (req, res) => {
                         var CreatedId;
                         con.query(sql, async function (err, result) {
                           try {
-                            console.log("result: ", result);
                             var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
                             CreatedId = userData.UserId;
 
@@ -268,103 +266,122 @@ accountRouter.post("/Login", dec, async (req, res) => {
     authentication: "false",
     UserId: "-1",
   };
-  var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
-  con.query(sql, function (err, result) {
-    try {
-      var date = new Date();
-      date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
-      var now = date.toISOString().slice(0, 16);
 
-      if (result.length == 0) {
-        res.status(400);
-        res.send("Böyle bir kullanıcı yok");
-      } else if (result.length != 0) {
-        //var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
-        var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
+  if (
+    !mail.includes(";") &&
+    !(mail.includes("(") && mail.includes(")") && mail.includes("SLEEP"))
+  ) {
+    var sql = `SELECT * FROM User WHERE Mail = '${mail}';`;
+    con.query(sql, function (err, result) {
+      try {
+        var date = new Date();
+        date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
+        var now = date.toISOString().slice(0, 16);
 
-        if (password == userData.Password) {
-          if (userData.frozen == 1) {
-            var sql = `UPDATE User SET accountVisibility = 1, frozen = 0 WHERE UserId = ${userData.UserId}`;
-            con.query(sql, function (err, result) {});
-          }
-          var sql = `SELECT * FROM Photos WHERE UserId = ${userData.UserId};`;
-          con.query(sql, function (err, result2) {
-            try {
-              var sql = `SELECT InterestName FROM Interested WHERE UserId = ${userData.UserId};`;
-              con.query(sql, async function (err, result3) {
-                try {
-                  var myInterests = [];
-                  var myPhotos = [];
-                  if (result3.length != 0) myInterests = result3;
-                  if (result2.length != 0) myPhotos = result2;
-
-                  var sesToken = await sessionTokenGenerator();
-                  var date = new Date();
-
-                  var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
-                  con.query(sql, function (err, result) {
-                    try {
-                    } catch (err) {
-                      res.send("Error about sesToken");
-                    }
-                  });
-                  myres = {
-                    authentication: "true",
-                    userId: userData.UserId,
-                    Birth_date: userData.Birth_date,
-                    Name: `${userData.Name}`,
-                    Gender: `${userData.Gender}`,
-                    Surname: `${userData.Surname}`,
-                    School: `${userData.School}`,
-                    BlockCampus: `${userData.BlockCampus}`,
-                    OnlyCampus: `${userData.OnlyCampus}`,
-                    Invisible: `${userData.Invisible}`,
-                    PremiumEndDate: `${userData.PremiumEndDate}`,
-                    LikeCount: `${userData.LikeCount}`,
-                    SuperLikeCount: `${userData.SuperLikeCount}`,
-                    SwipeRefreshTime: `${userData.SwipeRefreshTime}`,
-                    Expectation: `${userData.Expectation}`,
-                    InterestedSex: `${userData.InterestedSex}`,
-                    sexualOrientation: `${userData.SexualOrientation}`,
-                    SOVisibility: `${userData.SOVisibility}`,
-                    Major: `${userData.Major}`,
-                    Din: `${userData.Din}`,
-                    Burc: `${userData.Burc}`,
-                    Beslenme: `${userData.Beslenme}`,
-                    Alkol: `${userData.Alkol}`,
-                    Sigara: `${userData.Sigara}`,
-                    About: `${userData.About}`,
-                    Photo: myPhotos,
-                    interest: myInterests,
-                    sesToken: sesToken,
-                    onBoardingComplete: userData.onBoardingComplete,
-                    matchMode: userData.matchMode,
-                    City: userData.City,
-                    applists: appLists,
-                  };
-
-                  myres = encPipeline(myres, secKeys);
-                  res.send(myres);
-                } catch (err) {
-                  console.log(err);
-                  res.send("Error while selecting interest");
-                }
-              });
-            } catch (err) {
-              res.send("Error While selecting photos");
-            }
-          });
-        } else {
+        if (result.length == 0) {
           res.status(400);
-          myres = "Parola Yanlış";
-          res.send(myres);
+          res.send("Böyle bir kullanıcı yok");
+        } else if (result.length != 0) {
+          //var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
+          var userData = JSON.parse(JSON.stringify(result).slice(1, -1));
+
+          if (password == userData.Password) {
+            if (userData.frozen == 1) {
+              var sql = `UPDATE User SET accountVisibility = 1, frozen = 0 WHERE UserId = ${userData.UserId}`;
+              con.query(sql, function (err, result) {});
+            }
+            var sql = `SELECT * FROM Photos WHERE UserId = ${userData.UserId};`;
+            con.query(sql, function (err, result2) {
+              try {
+                var sql = `SELECT InterestName FROM Interested WHERE UserId = ${userData.UserId};`;
+                con.query(sql, async function (err, result3) {
+                  try {
+                    var myInterests = [];
+                    var myPhotos = [];
+                    if (result3.length != 0) myInterests = result3;
+                    if (result2.length != 0) myPhotos = result2;
+
+                    var sesToken = await sessionTokenGenerator();
+                    var date = new Date();
+
+                    var sql = `REPLACE INTO sesToken (sesToken, UserId, Date) VALUES ('${sesToken}','${userData.UserId}', '${now}');`;
+                    con.query(sql, function (err, result) {
+                      try {
+                      } catch (err) {
+                        res.send("Error about sesToken");
+                      }
+                    });
+
+                    myres = {
+                      authentication: "true",
+                      userId: userData.UserId,
+                      Birth_date: userData.Birth_date,
+                      Name: `${userData.Name}`,
+                      Gender: `${userData.Gender}`,
+                      Surname: `${userData.Surname}`,
+                      School: `${userData.School}`,
+                      BlockCampus: `${userData.BlockCampus}`,
+                      OnlyCampus: `${userData.OnlyCampus}`,
+                      Invisible: `${userData.Invisible}`,
+                      PremiumEndDate: `${userData.PremiumEndDate}`,
+                      LikeCount: `${userData.LikeCount}`,
+                      SuperLikeCount: `${userData.SuperLikeCount}`,
+                      SwipeRefreshTime: `${userData.SwipeRefreshTime}`,
+                      Expectation: `${userData.Expectation}`,
+                      InterestedSex: `${userData.InterestedSex}`,
+                      sexualOrientation: `${userData.SexualOrientation}`,
+                      SOVisibility: `${userData.SOVisibility}`,
+                      Major: `${userData.Major}`,
+                      Din: `${userData.Din}`,
+                      Burc: `${userData.Burc}`,
+                      Beslenme: `${userData.Beslenme}`,
+                      Alkol: `${userData.Alkol}`,
+                      Sigara: `${userData.Sigara}`,
+                      About: `${userData.About}`,
+                      Photo: myPhotos,
+                      interest: myInterests,
+                      sesToken: sesToken,
+                      onBoardingComplete: userData.onBoardingComplete,
+                      matchMode: userData.matchMode,
+                      City: userData.City,
+                      applists: appLists,
+                      blurCount: userData.blurCount,
+                      tutorial1: userData.tutorial1,
+                      tutorial2: userData.tutorial2,
+                      tutorial3: userData.tutorial3,
+                      tutorial4: userData.tutorial4,
+                      tutorial5: userData.tutorial5,
+                      tutorial6: userData.tutorial6,
+                    };
+                    //console.log(myres);
+
+                    myres = encPipeline(myres, secKeys);
+                    res.send(myres);
+                  } catch (err) {
+                    console.log(err);
+                    res.send("Error while selecting interest");
+                  }
+                });
+              } catch (err) {
+                res.send("Error While selecting photos");
+              }
+            });
+          } else {
+            res.status(400);
+            myres = "Parola Yanlış";
+            res.send(myres);
+          }
         }
+      } catch (err) {
+        res.send("Error while checking user");
+        console.log(err);
       }
-    } catch (err) {
-      res.send("Error while checking user");
-      console.log(err);
-    }
-  });
+    });
+  } else {
+    console.log("attack");
+    res.status(400);
+    res.send("Böyle bir kullanıcı yok");
+  }
 });
 
 //SEND VERIFICATION

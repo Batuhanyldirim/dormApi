@@ -1,4 +1,4 @@
-export var demoAccounts = "(1118, 1206, 141, 32, 33, 1454, 1715)";
+export var demoAccounts = "(1118, 1206, 141, 32, 33, 35,36, 1454, 1715)";
 export var expectationList = {
   takilmak: new Set(),
   kisaSureli: new Set(),
@@ -17,6 +17,7 @@ export var genderPreference = {
   pansexual: new Set(),
   asexual: new Set(),
 };
+
 export var dailyStats = {
   newUser: 0,
   frozenUser: 0,
@@ -35,6 +36,7 @@ export var dailyStats = {
   dailyNewMessages: 0,
   totalMessages: 0,
 };
+
 export var cacheStats = {
   cacheSize: 0,
   frozenUser: 0,
@@ -87,6 +89,16 @@ export var checkList = {
   36: "ogrenci.sbu.edu.tr",
   37: "stud.tau.edu.tr",
   38: "tedu.edu.tr",
+  39: "std.ankaramedipol.edu.tr",
+  40: "ybu.edu.tr",
+  41: "student.atilim.edu.tr",
+  42: "ufuk.edu.tr",
+  43: "gazi.edu.tr",
+  44: "ogrenci.ege.edu.tr",
+  45: "ieu.edu.tr",
+  46: "ogr.deu.edu.tr",
+  47: "ogr.ikc.edu.tr",
+  48: "stu.yasar.edu.tr",
 };
 
 export var appLists = {
@@ -97,7 +109,6 @@ export var appLists = {
     { key: 3, choice: "Belirtmek İstemiyorum" },
   ],
   univList: {
-    //maxKey: 20
     ankara: [
       { key: 14, choice: "Ankara Üniversitesi", mailExt: "ogrenci.ankara.edu.tr" },
       { key: 15, choice: "Başkent Üniversitesi", mailExt: "mail.baskent.edu.tr" },
@@ -106,6 +117,11 @@ export var appLists = {
       { key: 38, choice: "TED Üniversitesi", mailExt: "tedu.edu.tr" },
       { key: 18, choice: "TOBB", mailExt: "etu.edu.tr" },
       { key: 19, choice: "ODTÜ", mailExt: "metu.edu.tr" },
+      { key: 39, choice: "Ankara Medipol Üniversitesi", mailExt: "std.ankaramedipol.edu.tr" },
+      { key: 40, choice: "Yıldırım Beyazıt Üniversitesi", mailExt: "ybu.edu.tr" },
+      { key: 41, choice: "Atılım Üniversitesi", mailExt: "student.atilim.edu.tr" },
+      { key: 42, choice: "Ufuk Üniversitesi", mailExt: "ufuk.edu.tr" },
+      { key: 43, choice: "Gazi Üniversitesi", mailExt: "gazi.edu.tr" },
     ],
     istanbul: [
       { key: 0, choice: "Acıbadem Üniversitesi", mailExt: "live.acibadem.edu.tr" },
@@ -140,6 +156,13 @@ export var appLists = {
       { key: 37, choice: "Türk Alman üniversitesi", mailExt: "stud.tau.edu.tr" },
       { key: 12, choice: "Yeditepe Üniversitesi", mailExt: "std.yeditepe.edu.tr" },
       { key: 13, choice: "Yıldız Teknik Üniversitesi", mailExt: "std.yildiz.edu.tr" },
+    ],
+    izmir: [
+      { key: 44, choice: "Ege Üniversitesi", mailExt: "ogrenci.ege.edu.tr" },
+      { key: 45, choice: "İzmir Ekonomi Üniversitesi", mailExt: "ieu.edu.tr" },
+      { key: 46, choice: "İzmir Dokuz Eylül Üniversitesi", mailExt: "ogr.deu.edu.tr" },
+      { key: 47, choice: "Katip Çelebi Üniversitesi", mailExt: "ogr.ikc.edu.tr" },
+      { key: 48, choice: "Yaşar Üniversitesi", mailExt: "stu.yasar.edu.tr" },
     ],
   },
 
@@ -206,5 +229,6 @@ export var appLists = {
   cityList: [
     { idx: 1, key: "ankara", choice: "Ankara" },
     { idx: 2, key: "istanbul", choice: "İstanbul" },
+    { idx: 3, key: "izmir", choice: "İzmir" },
   ],
 };

@@ -8,6 +8,7 @@ import { choseList } from "../logic/choseList.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { auth } from "../middlewares/authentication.js";
 import { demoAccounts } from "../lists.js";
+import { syncQuery, makeSqlList } from "../logic/functions.js";
 
 export const listsRouter = express.Router();
 
@@ -63,7 +64,7 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
               var ifCock = false;
               var fromIdx;
               for (let i = 0; i < event_list.length; i++) {
-                if (event_list[i].EventId == 668 || event_list[i].EventId == 716) {
+                if (event_list[i].EventId == 1208 || event_list[i].EventId == 1123) {
                   fromIdx = i;
                   ifCock = true;
                   break;
@@ -100,6 +101,8 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;
 
+  //console.log({ decBody });
+
   var userId = decBody.userId;
 
   var minAge = decBody.age[0];
@@ -113,22 +116,10 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
   con.query(sql2, function (err, result2) {
     try {
       var userData = JSON.parse(JSON.stringify(result2).slice(1, -1));
-
-      //console.log("This is result\n\n" + (await swipeList(con, "-1")));
       if (userData.Invisible) {
         res.status(411);
         res.send("Invisible");
       } else {
-        /* 
-                  console.log("userId: " + userId);
-                  console.log("minAge: " + minAge);
-                  console.log("maxAge: " + maxAge);
-                  console.log("cinsiyet: " + cinsiyet);
-                  console.log("alcohol: " + alcohol);
-                  console.log("cigar: " + cigar);
-                  console.log("userId: " + userId);
-                            */
-
         swipeList(
           userId,
           minAge,
@@ -153,7 +144,6 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
       console.log(err);
       res.send("error");
     }
-    //res.send(Object.values(swipeResult));
   });
 });
 
@@ -209,7 +199,7 @@ listsRouter.post("/eventParticipants", dec, auth, (req, res) => {
               AND School != '${userData.School}') OR (OnlyCampus = 1 AND School = '${userData.School}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = '${userId}') 
               AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${userId}') AND UserID NOT IN ${demoAccounts} AND Invisible = 0`;
             }
-            console.log("sql: ", sql);
+            //console.log("sql: ", sql);
             con.query(sql, function (err, result) {
               try {
                 var swipe_list = [];
@@ -243,7 +233,7 @@ listsRouter.post("/eventParticipants", dec, auth, (req, res) => {
                           }
                         }
 
-                        console.log(swipe_list);
+                        //console.log(swipe_list);
                         swipe_list = swipe_list.sort(() => Math.random() - 0.5);
                         swipe_list = encPipeline(swipe_list, secKeys);
 
@@ -274,6 +264,88 @@ listsRouter.post("/eventParticipants", dec, auth, (req, res) => {
       res.send("Kullanıcı bilgilerini almaya çalışırken hata oluştu");
     }
   });
+});
+
+//USERS LIKED YOU
+listsRouter.post("/usersLikedYou", dec, auth, async (req, res) => {
+  let secKeys = req.body.secKeys;
+  let decBody = req.body.decBody;
+
+  var userId = decBody.userId;
+
+  var sql = `SELECT userLiked, likeMode, blur, eventId FROM LikeOther WHERE otherUser = ${userId} 
+  AND userLiked NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = ${userId}) AND userLiked NOT IN ${demoAccounts}`;
+
+  var usersLiked = await syncQuery(sql);
+
+  var likeIds = makeSqlList(usersLiked);
+
+  sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About, blurTime FROM 
+  User WHERE UserId IN ${likeIds} AND UserId NOT IN ${demoAccounts}`;
+  //console.log(sql);
+  var users = await syncQuery(sql);
+
+  sql = `SELECT blurTime, blurCount FROM User WHERE UserId = ${userId} AND UserId NOT IN ${demoAccounts}`;
+
+  var myBlurTime = await syncQuery(sql);
+  var myCount = myBlurTime[0].blurCount;
+  myBlurTime = myBlurTime[0].blurTime;
+
+  var date = new Date();
+  var now = date.toISOString();
+  var blurTime = new Date(`${myBlurTime}`);
+  //console.log("blurTime: ", blurTime);
+  var diff = date.getTime() - blurTime.getTime();
+
+  if (diff > 86400000 && myCount == 0) {
+    sql = `UPDATE User SET blurCount = 1 WHERE UserId = ${userId}`;
+    await syncQuery(sql);
+  }
+
+  var likeListResult = { diff: diff, swipe_list: [] };
+
+  var swipe_list = [];
+  for (let i = 0; i < users.length; i++) {
+    let user = users[i];
+    user["blur"] = usersLiked[i].blur;
+    user["likeMode"] = usersLiked[i].likeMode;
+    user["eventId"] = usersLiked[i].eventId;
+    user["photos"] = [];
+    user["interest"] = [];
+    swipe_list.push(JSON.parse(JSON.stringify(user)));
+  }
+
+  sql = `SELECT * FROM Photos WHERE UserId IN ${likeIds}`;
+  var photos = await syncQuery(sql);
+  for (let i = 0; i < photos.length; i++) {
+    for (let j = 0; j < swipe_list.length; j++) {
+      if (swipe_list[j].UserId == photos[i].UserId) {
+        swipe_list[j]["photos"].push(photos[i]);
+      }
+    }
+  }
+
+  sql = `SELECT * FROM Interested WHERE UserId IN ${likeIds}`;
+
+  var interests = await syncQuery(sql);
+
+  for (let i = 0; i < interests.length; i++) {
+    for (let j = 0; j < swipe_list.length; j++) {
+      if (swipe_list[j].UserId == interests[i].UserId) {
+        swipe_list[j]["interest"].push(interests[i]);
+      }
+    }
+  }
+
+  //console.log(swipe_list.length);
+  //swipe_list = swipe_list.sort(() => Math.random() - 0.5);
+  //swipe_list = encPipeline(swipe_list, secKeys);
+  //console.log("len: ", swipe_list.length);
+  likeListResult.swipe_list = swipe_list;
+  //console.log(likeListResult);
+  likeListResult = encPipeline(likeListResult, secKeys);
+  //console.log(likeListResult.swipe_list.length);
+  res.send(likeListResult);
 });
 
 //GET LIKED EVENTS
@@ -316,7 +388,9 @@ listsRouter.post("/getLikedEvent", dec, (req, res) => {
 //GET MATCH LIST
 listsRouter.post("/matchList", async (req, res) => {
   var userId = req.body.userId;
-  var sql2 = `SELECT * FROM MatchR WHERE MId1 = ${userId} OR MId2 = ${userId}`;
+  var sql2 = `SELECT MatchR.MId1, MatchR.MId2, MatchR.MatchId, MatchR.ChatEmpty, MatchR.SuperMatch, MatchR.matchMode, 
+  MatchR.eventId, MatchR.date, Events.Description FROM MatchR, Events WHERE (MatchR.MId1 = ${userId} OR MatchR.MId2 = ${userId}) 
+  AND MatchR.eventId = Events.EventId`;
   con.query(sql2, function (err, result2) {
     try {
       res.send(result2);
