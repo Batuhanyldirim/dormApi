@@ -42,3 +42,16 @@ export function injectionCheck(input) {
     return true;
   }
 }
+
+export function bulkInjectionCheck(input) {
+  for (i = 0; i < input.length; i++) {
+    if (injectionCheck(input[i])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function between(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}

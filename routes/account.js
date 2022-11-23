@@ -7,14 +7,10 @@ import { addUser } from "../logic/updateGenderPref.js";
 import { appLists, genderPreference, expectationList } from "../lists.js";
 import { dec } from "../middlewares/enc-dec.js";
 import { setDate } from "../generators/endDateSet.js";
-import { checkMail } from "../logic/functions.js";
-import { injectionCheck } from "../logic/functions.js";
+import { checkMail, injectionCheck, bulkInjectionCheck, between } from "../logic/functions.js";
 
 export const accountRouter = express.Router();
 
-function between(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
-}
 //console.log("result: ", checkMail("asd@sabanciuniv.edu", 11));
 accountRouter.post("/trial", function (req, res, next) {
   //console.log("this is message: ", req.body);
@@ -31,10 +27,20 @@ accountRouter.post("/register", dec, async (req, res) => {
   const mailKey = decBody.mailKey ?? -1;
   //if (mailKey == -1 || checkMail(mail, mailKey)) {
 
-  if (injectionCheck(mail)) {
-    console.log(err);
+  if (
+    bulkInjectionCheck([
+      mail,
+      decBody.name,
+      decBody.surName,
+      decBody.city,
+      decBody.bDay,
+      decBody.school,
+      decBody.password,
+    ])
+  ) {
+    console.log("Attack detected on register mail");
     res.status(400);
-    res.send(err);
+    res.send("Register Unsuccessful");
   } else {
     if (true) {
       var UserVerCode = decBody.verification;
@@ -167,59 +173,65 @@ accountRouter.post("/PasswordRegister", dec, (req, res) => {
   const mail = decBody.mail;
   const password = decBody.password;
   var UserVerCode = decBody.verification;
-  var sql = `SELECT * FROM Verification WHERE VerMail = '${mail}';`;
 
-  con.query(sql, function (err, result) {
-    try {
-      //console.log("verCode: " + result[0]["VerCode"]);
-      //console.log("UserVerCode: " + UserVerCode);
-      if (result[0] == undefined) {
+  if (bulkInjectionCheck([mail, password])) {
+    res.status(400);
+    res.send("Unsuccessful attempt");
+  } else {
+    var sql = `SELECT * FROM Verification WHERE VerMail = '${mail}';`;
+
+    con.query(sql, function (err, result) {
+      try {
+        //console.log("verCode: " + result[0]["VerCode"]);
+        //console.log("UserVerCode: " + UserVerCode);
+        if (result[0] == undefined) {
+          res.status(400);
+          res.send({ Verification: -1 });
+        } else if (result[0]["attempt"] > 0 && result[0]["VerCode"] == UserVerCode) {
+          var sql = `DELETE FROM Verification WHERE VerMail = '${mail}';`;
+          con.query(sql, function (err, result) {
+            try {
+              var sql = `UPDATE User SET Password ='${password}' WHERE Mail =  '${mail}';`;
+              con.query(sql, function (err, result) {
+                try {
+                  res.send("Şifre Değiştirildi");
+                } catch (err) {
+                  res.send(err);
+                }
+              });
+            } catch (err) {
+              res.send(err);
+            }
+          });
+        } else if (result[0]["attempt"] == 0) {
+          var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
+          con.query(sql, function (err, result) {
+            try {
+            } catch (err) {
+              res.send(err);
+            }
+          });
+          res.send({ Verification: 1 });
+        } else {
+          var sql = `UPDATE Verification SET attempt = '${
+            result[0]["attempt"] - 1
+          }' WHERE VerMail = '${mail}';`;
+          con.query(sql, function (err, result) {
+            try {
+            } catch (err) {
+              res.status(400);
+              res.send("Error");
+            }
+          });
+          res.status(400);
+          res.send({ Verification: -1 });
+        }
+      } catch (err) {
         res.status(400);
-        res.send({ Verification: -1 });
-      } else if (result[0]["attempt"] > 0 && result[0]["VerCode"] == UserVerCode) {
-        var sql = `DELETE FROM Verification WHERE VerMail = '${mail}';`;
-        con.query(sql, function (err, result) {
-          try {
-            var sql = `UPDATE User SET Password ='${password}' WHERE Mail =  '${mail}';`;
-            con.query(sql, function (err, result) {
-              try {
-                res.send("Şifre Değiştirildi");
-              } catch (err) {
-                res.send(err);
-              }
-            });
-          } catch (err) {
-            res.send(err);
-          }
-        });
-      } else if (result[0]["attempt"] == 0) {
-        var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
-        con.query(sql, function (err, result) {
-          try {
-          } catch (err) {
-            res.send(err);
-          }
-        });
-        res.send({ Verification: 1 });
-      } else {
-        var sql = `UPDATE Verification SET attempt = '${
-          result[0]["attempt"] - 1
-        }' WHERE VerMail = '${mail}';`;
-        con.query(sql, function (err, result) {
-          try {
-          } catch (err) {
-            res.status(400);
-            res.send("Error");
-          }
-        });
-        res.status(400);
-        res.send({ Verification: -1 });
+        res.send(err);
       }
-    } catch (err) {
-      res.status(400);
-      res.send(err);
-    }
-  });
+    });
+  }
 });
 
 //AFTER REGISTER
@@ -241,20 +253,36 @@ accountRouter.post("/AfterRegister", dec, async (req, res) => {
       const accountVisibility = 1;
       const matchMode = decBody.matchMode;
       const accountValidation = 1;
-      addUser(genderPreference, userId, gender, SexualOrientation, expectationList, expectation);
 
-      var sql = `UPDATE User SET Gender ='${gender}', Expectation ='${expectation}', InterestedSex ='${InterestedSex}', 
+      if (
+        bulkInjectionCheck([
+          decBody.gender,
+          decBody.expectation,
+          decBody.interestedSex,
+          decBody.sexualOrientation,
+          decBody.SOVisibility,
+          decBody.genderVisibility,
+          decBody.matchMode,
+        ])
+      ) {
+        res.status(400);
+        res.send("Unsuccessful attempt");
+      } else {
+        addUser(genderPreference, userId, gender, SexualOrientation, expectationList, expectation);
+
+        var sql = `UPDATE User SET Gender ='${gender}', Expectation ='${expectation}', InterestedSex ='${InterestedSex}', 
       SexualOrientation ='${SexualOrientation}', SOVisibility ='${SOVisibility}', GenderVisibility ='${GenderVisibility}', 
       onBoardingComplete = ${onBoardingComplete}, matchMode = ${matchMode}, accountVisibility = ${accountVisibility}, 
       accountValidation = ${accountValidation} WHERE UserId = ${userId};`;
-      con.query(sql, async function (err, result) {
-        try {
-          //swipeResult = await swipeList(con, "-1");
-        } catch (err) {
-          res.send(err);
-        }
-      });
-      res.send("AfterReg");
+        con.query(sql, async function (err, result) {
+          try {
+            //swipeResult = await swipeList(con, "-1");
+          } catch (err) {
+            res.send(err);
+          }
+        });
+        res.send("AfterReg");
+      }
     } else {
       res.status(410);
       res.send("Unauthorized Session");
@@ -401,37 +429,42 @@ accountRouter.post("/SendVerification", dec, (req, res) => {
   date.setHours(date.getHours() - date.getTimezoneOffset() / 60);
   var now = date.toISOString().slice(0, -2);
 
-  var sql = `SELECT UserId FROM User WHERE Mail = '${Mail}';`;
+  if (injectionCheck(Mail)) {
+    res.status(400);
+    res.send("Unable to send verification");
+  } else {
+    var sql = `SELECT UserId FROM User WHERE Mail = '${Mail}';`;
 
-  con.query(sql, function (err, result) {
-    try {
-      if ((result == "" && isNewUser) || (result != "" && !isNewUser)) {
-        var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}'`;
-        con.query(sql, function (err, result) {
-          try {
-            var sql = `INSERT INTO Verification (VerMail, VerCode, attempt, date) VALUES ('${Mail}' , '${verCode}', 3, '${now}');`;
-            con.query(sql, function (err, result) {
-              try {
-                sendVerMail(Mail, verCode, isNewUser);
-                res.send({ Message: "Code has sent" });
-              } catch (err) {
-                res.send(err);
-              }
-            });
-          } catch (err) {
-            res.send(err);
-          }
-        });
-      } else if (result == "" && !isNewUser) {
-        res.send("");
-      } else {
-        res.status(400);
-        res.send(
-          "Bu mail adresi ile zaten bir hesap bulunmakta. Şifrenizi hatırlamıyorsanız yeni şifre isteyebilirsiniz."
-        );
-      }
-    } catch (err) {}
-  });
+    con.query(sql, function (err, result) {
+      try {
+        if ((result == "" && isNewUser) || (result != "" && !isNewUser)) {
+          var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}'`;
+          con.query(sql, function (err, result) {
+            try {
+              var sql = `INSERT INTO Verification (VerMail, VerCode, attempt, date) VALUES ('${Mail}' , '${verCode}', 3, '${now}');`;
+              con.query(sql, function (err, result) {
+                try {
+                  sendVerMail(Mail, verCode, isNewUser);
+                  res.send({ Message: "Code has sent" });
+                } catch (err) {
+                  res.send(err);
+                }
+              });
+            } catch (err) {
+              res.send(err);
+            }
+          });
+        } else if (result == "" && !isNewUser) {
+          res.send("");
+        } else {
+          res.status(400);
+          res.send(
+            "Bu mail adresi ile zaten bir hesap bulunmakta. Şifrenizi hatırlamıyorsanız yeni şifre isteyebilirsiniz."
+          );
+        }
+      } catch (err) {}
+    });
+  }
 });
 
 //CHECK VERIFICATION
@@ -441,38 +474,43 @@ accountRouter.post("/CheckVerification", dec, (req, res) => {
   const Mail = decBody.mail;
   var UserVerCode = decBody.verCode;
 
-  var sql = `SELECT * FROM Verification WHERE VerMail = '${Mail}';`;
-  con.query(sql, function (err, result) {
-    try {
-      if (result[0] == undefined) {
-        res.status(400);
-        res.send({ Verification: -1 });
-      } else if (result[0]["attempt"] > 0 && result[0]["VerCode"] == UserVerCode) {
-        res.send({ Verification: 1 });
-      } else if (result[0]["attempt"] == 0) {
-        var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
-        con.query(sql, function (err, result) {
-          try {
-          } catch (err) {
-            res.send(err);
-          }
-        });
-        res.send({ Verification: 1 });
-      } else {
-        var sql = `UPDATE Verification SET attempt = '${
-          result[0]["attempt"] - 1
-        }' WHERE VerMail = '${Mail}';`;
-        con.query(sql, function (err, result) {
-          try {
-          } catch (err) {
-            res.send("Error");
-          }
-        });
-        res.status(400);
-        res.send({ Verification: -1 });
+  if (bulkInjectionCheck([Mail, UserVerCode])) {
+    res.status(400);
+    res.send("Unvalid Code");
+  } else {
+    var sql = `SELECT * FROM Verification WHERE VerMail = '${Mail}';`;
+    con.query(sql, function (err, result) {
+      try {
+        if (result[0] == undefined) {
+          res.status(400);
+          res.send({ Verification: -1 });
+        } else if (result[0]["attempt"] > 0 && result[0]["VerCode"] == UserVerCode) {
+          res.send({ Verification: 1 });
+        } else if (result[0]["attempt"] == 0) {
+          var sql = `DELETE FROM Verification WHERE VerMail = '${Mail}';`;
+          con.query(sql, function (err, result) {
+            try {
+            } catch (err) {
+              res.send(err);
+            }
+          });
+          res.send({ Verification: 1 });
+        } else {
+          var sql = `UPDATE Verification SET attempt = '${
+            result[0]["attempt"] - 1
+          }' WHERE VerMail = '${Mail}';`;
+          con.query(sql, function (err, result) {
+            try {
+            } catch (err) {
+              res.send("Error");
+            }
+          });
+          res.status(400);
+          res.send({ Verification: -1 });
+        }
+      } catch (err) {
+        res.send(err);
       }
-    } catch (err) {
-      res.send(err);
-    }
-  });
+    });
+  }
 });
