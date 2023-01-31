@@ -10,7 +10,7 @@ import { auth } from "../middlewares/authentication.js";
 import { sendReportMail } from "../senders/verMail.js";
 
 export const mainRouter = express.Router();
-
+//this is a change
 var corsOptions = {
   origin: "*",
   optionsSuccessStatus: 200, // For legacy browser support
@@ -170,14 +170,17 @@ if (process.env.RUN_STATE == "DEV") {
   //createEnc
   mainRouter.get("/createEnc", (req, res) => {
     if (process.env.DEV_TOKEN == req.headers["dev-token"]) {
-      var deviceId = "06GSF30t3gqbsFmNdhMy9D965AGrLNxb";
+      var deviceId = "0AYtv0G58WwuvW5jtTtgV961EQfqmN2e";
       var sql = `SELECT * FROM deviceId WHERE deviceId = '${deviceId}'`;
       con.query(sql, function (err, result) {
         //console.log("result: ", result);
         var req = {
           userId: 1,
-          kampus: "Sabancı Üniversitesi",
-          city: "İstanbul",
+          age: [18, 35],
+          cinsiyet: [1, 0, 0],
+          alkol: [],
+          sigara: [],
+          yemek: []
         };
 
         var encreq = encPipeline(req, result);

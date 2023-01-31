@@ -28,6 +28,7 @@ function syncQuery(con, sql) {
 }
 
 //Like/Dislike
+//TODO: chache the swipes to decrease database reach to reduce AWS bill
 userActionRouter.post("/LikeDislike", dec, async (req, res) => {
   let secKeys = req.body.secKeys;
   let decBody = req.body.decBody;

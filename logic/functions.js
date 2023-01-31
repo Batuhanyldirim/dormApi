@@ -32,10 +32,11 @@ export function makeSqlList(userList) {
   return resultList.slice(0, -1) + ")";
 }
 
-export function injectionCheck(input) {
+export function injectionCheck(inp) {
+  var strInp = JSON.stringify(inp);
   if (
-    !input.includes(";") &&
-    !(input.includes("(") && input.includes(")") && input.includes("SLEEP"))
+    !strInp.includes(";") &&
+    !(strInp.includes("(") && strInp.includes(")") && strInp.includes("SLEEP"))
   ) {
     return false;
   } else {
@@ -43,9 +44,9 @@ export function injectionCheck(input) {
   }
 }
 
-export function bulkInjectionCheck(input) {
-  for (i = 0; i < input.length; i++) {
-    if (injectionCheck(input[i])) {
+export function bulkInjectionCheck(inp) {
+  for (var i = 0; i < inp.length; i++) {
+    if (injectionCheck(inp[i])) {
       return true;
     }
   }

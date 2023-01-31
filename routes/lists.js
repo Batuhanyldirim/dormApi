@@ -75,7 +75,7 @@ listsRouter.post("/EventList", dec, auth, (req, res) => {
                 event_list.splice(0, 0, element);
                 //console.log(event_list[0]);
               } */
-              event_list = eventOrder([1208, 1192], event_list);
+              event_list = eventOrder([1297, 1299, 1300], event_list);
 
               event_list = encPipeline(event_list, secKeys);
               res.send(event_list);
@@ -113,7 +113,7 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
   var alcohol = decBody.alkol;
   var cigar = decBody.sigara;
   var food = decBody.yemek;
-  var sql2 = `SELECT Gender, InterestedSex, matchMode, Expectation, BlockCampus, OnlyCampus, School, Invisible FROM User WHERE UserId =${userId};`;
+  var sql2 = `SELECT Gender, InterestedSex, matchMode, Expectation, BlockCampus, OnlyCampus, School, Invisible, City FROM User WHERE UserId =${userId};`;
   con.query(sql2, function (err, result2) {
     try {
       var userData = JSON.parse(JSON.stringify(result2).slice(1, -1));
@@ -121,6 +121,7 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
         res.status(411);
         res.send("Invisible");
       } else {
+
         swipeList(
           userId,
           minAge,
@@ -138,6 +139,7 @@ listsRouter.post("/SwipeList", dec, auth, (req, res) => {
           userData.BlockCampus,
           userData.OnlyCampus,
           userData.School,
+          userData.City,
           secKeys
         );
       }

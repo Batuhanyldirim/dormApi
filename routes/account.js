@@ -113,7 +113,6 @@ accountRouter.post("/register", dec, async (req, res) => {
                                 userId: `${userData.UserId}`,
                                 sesToken: sesToken,
                               };
-
                               myres = encPipeline(myres, secKeys);
 
                               res.send(myres);
@@ -146,7 +145,6 @@ accountRouter.post("/register", dec, async (req, res) => {
                 res.send(err);
               }
             });
-
             //DELETE FROM `table_name` [WHERE condition];
           } else {
             console.log(err);
@@ -213,9 +211,8 @@ accountRouter.post("/PasswordRegister", dec, (req, res) => {
           });
           res.send({ Verification: 1 });
         } else {
-          var sql = `UPDATE Verification SET attempt = '${
-            result[0]["attempt"] - 1
-          }' WHERE VerMail = '${mail}';`;
+          var sql = `UPDATE Verification SET attempt = '${result[0]["attempt"] - 1
+            }' WHERE VerMail = '${mail}';`;
           con.query(sql, function (err, result) {
             try {
             } catch (err) {
@@ -325,7 +322,7 @@ accountRouter.post("/Login", dec, async (req, res) => {
           if (password == userData.Password) {
             if (userData.frozen == 1) {
               var sql = `UPDATE User SET accountVisibility = 1, frozen = 0 WHERE UserId = ${userData.UserId}`;
-              con.query(sql, function (err, result) {});
+              con.query(sql, function (err, result) { });
             }
             var sql = `SELECT * FROM Photos WHERE UserId = ${userData.UserId};`;
             con.query(sql, function (err, result2) {
@@ -462,7 +459,7 @@ accountRouter.post("/SendVerification", dec, (req, res) => {
             "Bu mail adresi ile zaten bir hesap bulunmakta. Şifrenizi hatırlamıyorsanız yeni şifre isteyebilirsiniz."
           );
         }
-      } catch (err) {}
+      } catch (err) { }
     });
   }
 });
@@ -496,9 +493,8 @@ accountRouter.post("/CheckVerification", dec, (req, res) => {
           });
           res.send({ Verification: 1 });
         } else {
-          var sql = `UPDATE Verification SET attempt = '${
-            result[0]["attempt"] - 1
-          }' WHERE VerMail = '${Mail}';`;
+          var sql = `UPDATE Verification SET attempt = '${result[0]["attempt"] - 1
+            }' WHERE VerMail = '${Mail}';`;
           con.query(sql, function (err, result) {
             try {
             } catch (err) {

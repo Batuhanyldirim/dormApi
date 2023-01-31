@@ -21,9 +21,11 @@ export async function swipeList(
   blockCampus,
   onlyCampus,
   school,
+  city,
   secKeys
 ) {
   try {
+    console.log({ city })
     var date = new Date();
     var now = date.toISOString().substring(0, 10);
     var thisYear = parseInt(now.substring(0, 4));
@@ -93,8 +95,8 @@ export async function swipeList(
       resultSwipeId += ")";
 
       var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM User 
-  WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} Birth_date < '${maxBirth}' AND Birth_date > '${minBirth}' AND matchMode = 0 
-  AND Invisible = 0 AND accountVisibility = 1 AND ((BlockCampus = 1 AND School != '${school}') OR (OnlyCampus = 1 AND School 
+  WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} Birth_date < '${maxBirth}' AND Birth_date > '${minBirth}' AND 
+  (matchMode = 0 OR matchMode = 3) AND Invisible = 0 AND City = city AND accountVisibility = 1 AND ((BlockCampus = 1 AND School != '${school}') OR (OnlyCampus = 1 AND School 
     = '${school}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND UserId IN ${resultSwipeId} AND UserId NOT IN (SELECT otherUser FROM ActedOther 
     WHERE userActed = '${UserId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${UserId}');`;
     } else if (matchMode == 1) {
@@ -106,9 +108,9 @@ export async function swipeList(
       console.log("genderList: " + genderList); */
 
       var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM User 
-  WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} matchMode = 1 AND Birth_date < '${maxBirth}' AND ((BlockCampus = 1 AND School != '${school}') 
+  WHERE UserId != '${UserId}' AND UserID NOT IN ${demoAccounts} AND${campusFilter} (matchMode = 1 OR matchMode = 4) AND Birth_date < '${maxBirth}' AND ((BlockCampus = 1 AND School != '${school}') 
   OR (OnlyCampus = 1 AND School = '${school}') OR (OnlyCampus = 0 AND BlockCampus = 0)) AND Birth_date > '${minBirth}' 
-  AND accountVisibility = 1 AND Invisible = 0 AND Gender IN ${genderList} AND UserId NOT IN (SELECT otherUser 
+  AND accountVisibility = 1 AND Invisible = 0 AND City = city AND Gender IN ${genderList} AND UserId NOT IN (SELECT otherUser 
     FROM ActedOther WHERE userActed = '${UserId}') AND UserId NOT IN (SELECT sikayetEdilen FROM rapor WHERE sikayetEden = '${UserId}');`;
     }
   } catch (err) {
