@@ -1,3 +1,7 @@
+/* 
+Authentication for endpoints
+*/
+
 import { con } from "../connections/dbConnection.js";
 
 export function auth(req, res, next) {

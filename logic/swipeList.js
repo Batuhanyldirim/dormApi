@@ -1,3 +1,7 @@
+/* 
+Retreives users to swipe for every individual users with respect to their preferences
+*/
+
 import mysql from "mysql2";
 import { choseList } from "./choseList.js";
 import { encPipeline } from "../generators/encrypt.js";
@@ -171,78 +175,3 @@ export async function swipeList(
     }
   });
 }
-
-/* import mysql from "mysql2/promise";
-
-const con = await mysql.createConnection({
-  host: process.env.SQL_HOST_NAME,
-  user: process.env.SQL_USER_NAME,
-  password: process.env.SQL_PASSWORD,
-});
-
-export async function swipeList(con, UserId) {
-  var sql = `SELECT Name, City, Birth_Date, UserId, Gender, Surname, School, Major, Din, Burc, Beslenme, Alkol, Sigara, About FROM User WHERE UserId != '${UserId}' AND UserId NOT IN (SELECT otherUser FROM ActedOther WHERE userActed = '${UserId}');`;
-  var swipe_list = {};
-  await con
-    .promise()
-    .query(sql)
-    .then(async ([rows, fields]) => {
-      Promise.all(
-        rows.map((item) => {
-          let user = item;
-          user["photos"] = [];
-          user["interest"] = [];
-          swipe_list[user.UserId] = user;
-        })
-      );
-
-      var sql = `SELECT * FROM Photos;`;
-      await con
-        .promise()
-        .query(sql)
-        .then(async ([rows, fields]) => {
-          Promise.all(
-            rows.map((item) => {
-              for (let key in swipe_list) {
-                if (key == item.UserId) {
-                  swipe_list[key]["photos"].push(item);
-                }
-              }
-            })
-          );
-          var sql = `SELECT * FROM Interested;`;
-          await con
-            .promise()
-            .query(sql)
-            .then(([rows, fields]) => {
-              Promise.all(
-                rows.map((item) => {
-                  for (let key in swipe_list) {
-                    if (key == item.UserId) {
-                      swipe_list[key]["interest"].push(item);
-                    }
-                  }
-                })
-              );
-
-              //swipe_list = swipe_list.sort(() => Math.random() - 0.5);
-              //console.log(swipe_list);
-              return swipe_list;
-            })
-            .catch((err) => {
-              console.log(err);
-              return err;
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-          return err;
-        });
-    })
-    .catch((err) => {
-      console.log(err);
-      return err;
-    });
-
-  return swipe_list;
-} */

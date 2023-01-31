@@ -1,3 +1,7 @@
+/* 
+Sends statistics to admin panel
+*/
+
 import { cacheStats } from "../lists.js";
 import axios from "axios";
 

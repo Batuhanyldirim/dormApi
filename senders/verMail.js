@@ -1,3 +1,7 @@
+/* 
+Sends verification mail for password reset or user register operations
+*/
+
 import AWS from "aws-sdk";
 
 AWS.config.update({

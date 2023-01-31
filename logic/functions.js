@@ -1,6 +1,8 @@
 import { checkList } from "../lists.js";
 import { con } from "../connections/dbConnection.js";
 
+
+//Check mail validation
 export function checkMail(mail, mailKey) {
   var splitted = mail.split("@");
   if (splitted.length == 2 && splitted[1] == checkList[mailKey]) {
@@ -11,6 +13,7 @@ export function checkMail(mail, mailKey) {
   return false;
 }
 
+//function for performing database actions synchronously
 export function syncQuery(sql) {
   return new Promise((resolve, reject) => {
     con.query(sql, (error, elements) => {
@@ -22,6 +25,7 @@ export function syncQuery(sql) {
   });
 }
 
+//creates insert SQL statements for adding given user list
 export function makeSqlList(userList) {
   var resultList = "(";
 
@@ -32,6 +36,7 @@ export function makeSqlList(userList) {
   return resultList.slice(0, -1) + ")";
 }
 
+//Checks if there is an SQL injection attack
 export function injectionCheck(inp) {
   var strInp = JSON.stringify(inp);
   if (
@@ -44,6 +49,7 @@ export function injectionCheck(inp) {
   }
 }
 
+//Checks if there is an SQL injection attack on bulk insert to database
 export function bulkInjectionCheck(inp) {
   for (var i = 0; i < inp.length; i++) {
     if (injectionCheck(inp[i])) {
@@ -53,10 +59,12 @@ export function bulkInjectionCheck(inp) {
   return false;
 }
 
+//Number generatr between given values
 export function between(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+//If we made a deal with an event, we are listing them on the top with that function
 export function eventOrder(idList, eventList) {
   var idMap = {};
   var promotedEvents = [];

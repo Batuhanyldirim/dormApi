@@ -1,3 +1,12 @@
+/* 
+This file contains list templates and admin defined values
+
+IMPROVEMENTS: 
+1) Admim defined values should be retreived from database where they can be changed from admin panel
+2)
+*/
+
+
 export var demoAccounts = "(1118, 1206, 141, 32, 33, 35,36, 1454, 1715)";
 export var expectationList = {
   takilmak: new Set(),
@@ -104,6 +113,7 @@ export var checkList = {
   51: "ogrenci.beykoz.edu.tr",
 };
 
+//Inner lists in appList are merged in order to be sent front end easily
 export var appLists = {
   genderList: [
     { key: 0, choice: "Kadın" },

@@ -5,7 +5,6 @@ import AWS from "aws-sdk";
 
 import { generateSecureLink } from "./generators/s3link.js";
 import { con } from "./connections/dbConnection.js";
-
 import { updateBoth } from "./logic/updateGenderPref.js";
 import { genderPreference, expectationList } from "./lists.js";
 
@@ -32,6 +31,8 @@ app.use(bp.urlencoded({ extended: true }));
 const port = process.env.PORT || 3001;
 app.listen(port, () => console.log(`Listening on port ${port} ...`));
 
+
+//TODO: Create controllers for routes
 app.use("/", mainRouter);
 app.use("/account", accountRouter);
 app.use("/statistics", statisticsRouter);
@@ -40,13 +41,4 @@ app.use("/userAction", userActionRouter);
 app.use("/lists", listsRouter);
 
 updateBoth(genderPreference, expectationList);
-
 statCache();
-
-/* 
-const con = mysql.createConnection({
-  host: process.env.SQL_HOST_NAME,
-  user: process.env.SQL_USER_NAME,
-  password: process.env.SQL_PASSWORD,
-});
- */

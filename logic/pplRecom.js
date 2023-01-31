@@ -1,3 +1,9 @@
+/* 
+This part of code is not complete and does not working. It aims to create a user id tree
+with respect to user attributes. So we can cache users in a tree and retreive them  from cache 
+insted of database with log(n) complexity.
+*/
+
 import { categories } from "./lists.js";
 
 class Node {

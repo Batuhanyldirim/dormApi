@@ -1,3 +1,7 @@
+/* 
+Updates genders and preferences chache
+*/
+
 import { con } from "../connections/dbConnection.js";
 
 export async function updateBoth(genderPreference, expectation) {

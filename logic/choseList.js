@@ -1,3 +1,8 @@
+/* 
+This page performs set operations on categorised user IDs so the cost of user data retreival 
+from the database is reduced.
+*/
+
 function addSet(setA, setB) {
   return new Set([...setA, ...setB]);
 }
@@ -56,10 +61,6 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
     );
   }
 
-  /*   console.log("gender: ", gender);
-  console.log("interestedSex: ", interestedSex);
-  console.log("resultSet: ", resultSet); */
-
   if (expectation == 1) {
     var expectResult = add6set(
       expectationList["takilmak"],
@@ -109,13 +110,8 @@ export function choseList(genderPreference, gender, interestedSex, expectationLi
     finalResult = resultSet;
     isFive = true;
   }
-  /* 
-  console.log("expectation: ", expectation);
-  console.log("expectation: \n expectation\nexpectation\nexpectation");
-  console.log("expectResult: ", expectResult); */
 
   if (!isFive && expectResult != undefined && resultSet != undefined) {
-    //console.log("expectResult: ", expectResult);
     var finalResult = getIntersection(resultSet, expectResult);
   }
 

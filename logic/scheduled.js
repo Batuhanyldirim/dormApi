@@ -1,3 +1,7 @@
+/* 
+Performs scheduled tasks periodically
+*/
+
 import cron from "node-cron";
 
 async function deleteEvents(con) {

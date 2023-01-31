@@ -1,3 +1,7 @@
+/* 
+Encodes and decodes all traffic between server and client
+*/
+
 import { con } from "../connections/dbConnection.js";
 import { decPipeline } from "../generators/encrypt.js";
 
