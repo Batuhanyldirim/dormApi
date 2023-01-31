@@ -1,8 +1,8 @@
 # Statistics
-10K+ Download
-500K+ Swipe
-1000+ Unique Match
-250+ Daily Users
+10K+ Download  
+500K+ Swipe 
+1000+ Unique Match  
+250+ Daily Users  
 
 
 # dorm App
