@@ -13,5 +13,6 @@ dorm App is an application to find events in your town and see other university 
 # Requirements
 In order to run this code you need your own AWS access keys and other cloud credentials with same database design. This code is not here to reproduce the project but the give idea about how this system works. There are 2 other back end projects named. dorm-message and dorm-adminPanel which those projects are connected and designed to work as a whole since it is a conplex project.
 
-
+# Improvements
+Users actions such as swipe can be chached in order to reduce database traffic as I did for user accounts and messages. Messages are chached and are checking both from chache and database but not written to database every time.
 
