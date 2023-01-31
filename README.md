@@ -2,9 +2,6 @@
 Backend API for Mobile Dating App
 
 # Description
-This project is the backend API for a mobile dating app that performs all necessary operations, such as user authentication, data storage, and matching algorithms.
+This is a mobile app back end for event based dating app. Only university students can register to app and create their profiles.
 
-# Technologies Used
-Language: [language name and version]
-Framework: [framework name and version]
-Database: [database name and version]
+
